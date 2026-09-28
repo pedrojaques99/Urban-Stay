@@ -26,8 +26,10 @@ import { DUR, EASE_MASK } from '../lib/motion'
  * eixo. O `transform-box: view-box` do CSS e o que faz esses valores serem
  * lidos em unidades do viewBox.
  *
- * O pulso e keyframe de CSS, nao tween de JS: o movimento e periodico, roda
- * no compositor e nao pede um frame de React por ciclo. As outras tres
+ * Duas leituras, ambas keyframe de CSS (rodam no compositor, sem frame de
+ * React): `persiana` e a oficial da tela de carga (28/09, escolha do dono):
+ * as fatias giram como laminas de um blackout, do centro para as pontas, e
+ * param juntas na forma original. `pulso` e o loop para esperas menores. As outras tres
  * leituras (orbita, varredura, traco) foram testadas e descartadas em 28/09;
  * estao no historico do git se voltarem a ser consideradas. O
  * `draw` de `Stage.tsx` continua unico dono dos transforms dos cards — o
@@ -48,16 +50,18 @@ const SLICES: { cx: number; dist: number; d: string }[] = [
 type MarkProps = {
   /** lado do simbolo em px de tela; vira `--mark-size` */
   size?: number
+  /** `persiana` abre uma vez e para; `pulso` repete */
+  motion?: 'persiana' | 'pulso'
 }
 
 /**
  * O simbolo animado, sem moldura nem fundo. Serve para a tela de carga e
  * para qualquer espera menor (um botao, um bloco que ainda vai chegar).
  */
-export function Mark({ size = 88 }: MarkProps) {
+export function Mark({ size = 88, motion = 'pulso' }: MarkProps) {
   return (
     <svg
-      className="mark mark--pulso"
+      className={`mark mark--${motion}`}
       style={{ '--mark-size': `${size}px` } as CSSProperties}
       viewBox="0 0 463 463"
       role="img"
@@ -87,7 +91,7 @@ export function Mark({ size = 88 }: MarkProps) {
    ------------------------------------------------------------------ */
 
 type LoaderProps = {
-  /** tempo minimo em tela, para a marca nao piscar numa carga rapida */
+  /** tempo minimo em tela: cobre a persiana inteira (1.6s), senao ela sai pela metade */
   minDuration?: number
   onDone: () => void
 }
@@ -106,7 +110,7 @@ type LoaderProps = {
 /** teto de espera pela fonte, em ms: depois disso a pagina aparece de qualquer jeito */
 const MAX_WAIT = 2500
 
-export function Loader({ minDuration = 800, onDone }: LoaderProps) {
+export function Loader({ minDuration = 1600, onDone }: LoaderProps) {
   useEffect(() => {
     let alive = true
     const started = performance.now()
@@ -148,7 +152,7 @@ export function Loader({ minDuration = 800, onDone }: LoaderProps) {
       role="status"
       aria-live="polite"
     >
-      <Mark size={104} />
+      <Mark size={104} motion="persiana" />
       <span className="loader__label">Urban Stay®</span>
     </motion.div>
   )

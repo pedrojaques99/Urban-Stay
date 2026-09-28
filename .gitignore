@@ -29,3 +29,6 @@ Thumbs.db
 *.swp
 .vercel
 .env*
+
+# config local do Claude Code (nunca publicar)
+.claude/
