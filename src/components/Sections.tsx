@@ -6,6 +6,7 @@ import { StarIcon } from '@phosphor-icons/react/dist/csr/Star'
 import { CARDS, INSTITUTIONAL_LINKS, LEGAL_LINKS, MANIFESTO, SECTION, SITE, toHome } from '../design'
 import { DUR, EASE_MASK, riseIn } from '../lib/motion'
 import { MaskTitle, Rise } from './Reveal'
+import { FooterMark } from './FooterMark'
 import { imgProps } from '../lib/img'
 
 /**
@@ -274,7 +275,7 @@ export function Footer({ cta = true }: { cta?: boolean }) {
             <ArrowUpRightIcon aria-hidden="true" />
           </a>
         )}
-        <img className="site-footer__mark" src="/img/logo-areia.svg" alt="Urban Stay" width={202} height={20} loading="lazy" />
+        <FooterMark label="Urban Stay" />
         <div className="site-footer__bottom">
           <span>© {new Date().getFullYear()} Urban Stay®</span>
           <nav aria-label={SITE.footer.legalLabel}>

@@ -830,8 +830,17 @@
 }
 
 .site-footer__mark {
+  display: block;
+  width: 100%;
+}
+
+/* o proprio SVG e a mascara da entrada (FooterMark): as letras sobem de
+   baixo dele. O arquivo traz overflow="visible"; o CSS vence o atributo. */
+.site-footer__mark svg {
+  display: block;
   width: 100%;
   height: auto;
+  overflow: hidden;
 }
 
 .site-footer__bottom {

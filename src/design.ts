@@ -128,8 +128,8 @@ export const CARDS: CardSpec[] = [
     },
     slot: { x: COL_L, y: -330.0145 },
     benefit: {
-      title: 'Checkout até as 14h.',
-      lead: 'A gente entende que você dormiu tarde.',
+      title: 'O ar frio na porta.',
+      lead: 'O cheiro chega antes de você.',
     },
     depth: 6,
   },
@@ -142,8 +142,8 @@ export const CARDS: CardSpec[] = [
     },
     slot: { x: COL_C, y: -557.4345 },
     benefit: {
-      title: 'Café sem hora marcada.',
-      lead: 'A cozinha acorda quando você acorda.',
+      title: 'A cama depois das cinco.',
+      lead: 'Checkout até as 14h. Sem pressa.',
     },
     depth: 5,
   },
@@ -156,8 +156,8 @@ export const CARDS: CardSpec[] = [
     },
     slot: { x: COL_R, y: -330.0145 },
     benefit: {
-      title: 'Roupão é traje social.',
-      lead: 'Ninguém aqui liga para o seu look.',
+      title: 'O banho depois da areia.',
+      lead: 'Roupão é traje social por aqui.',
     },
     depth: 4,
   },
@@ -199,7 +199,7 @@ export const CARDS: CardSpec[] = [
     },
     slot: { x: COL_L, y: 335.7055 },
     benefit: {
-      title: 'Vista que segura o dia.',
+      title: 'A gente cuidou de tudo.',
       lead: 'O mar começa na sua janela.',
     },
     depth: 1,
