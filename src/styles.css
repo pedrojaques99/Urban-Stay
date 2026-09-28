@@ -165,30 +165,6 @@ a {
   filter: invert(1);
 }
 
-.nav__links {
-  display: flex;
-  align-items: center;
-  gap: calc(64px * var(--k));
-  white-space: nowrap;
-}
-
-/* wrapper de entrada: carrega a animacao para o <a> manter opacidade e hover */
-.nav__link {
-  display: inline-flex;
-}
-
-.nav__links a {
-  font-size: calc(14px * var(--k));
-  line-height: 1.4;
-  letter-spacing: calc(0.14px * var(--k));
-  opacity: 0.8;
-  transition: opacity 0.35s var(--ease-out);
-}
-
-.nav__links a:hover {
-  opacity: 1;
-}
-
 /* Botao preto — px 22 / py 14 / radius 4 */
 .btn {
   display: inline-flex;
@@ -424,10 +400,6 @@ a {
    Mobile — o art-board de 1440 vira um recorte de 820
    ------------------------------------------------------------------ */
 @media (max-width: 1023px) {
-  .nav__links {
-    display: none;
-  }
-
   .nav {
     max-width: calc(100vw - 24px);
   }

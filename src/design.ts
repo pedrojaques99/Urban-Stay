@@ -351,6 +351,15 @@ export const INSTITUTIONAL_LINKS = [
   { label: 'Contato', href: '/contato.html' },
 ] as const
 
+/** Foto que o menu em tela cheia mostra para cada link (hover/foco troca). */
+export const MENU_PHOTOS: Record<string, string> = {
+  '/': '/img/bed.png',
+  '/empresa.html': '/img/memoir-paper.png',
+  '/atuacao.html': '/img/memoir-terrace.png',
+  '/destino.html': '/img/window.png',
+  '/contato.html': '/img/cards.png',
+}
+
 /** Escalas novas derivadas dos frames 9068:919 / 9111:4, sem nodes próprios. */
 export const EDITORIAL_LAYOUT = {
   aboutTitle: 180,
@@ -368,9 +377,6 @@ export const EDITORIAL_LAYOUT = {
 
 /** Expansão editorial do grid 9068:919; páginas novas, sem nodes próprios. */
 export const CORPORATE = {
-  eyebrow: 'Hospitalidade · Identidade · Cidade',
-  homeTitle: 'Uma marca.\nMuitas conexões.',
-  homeBody: 'Conheça a Urban Stay, nossa visão de hospitalidade e os caminhos para construir novas relações com a marca.',
   intro: 'A Urban Stay aproxima a experiência de estar em uma cidade do cuidado com o tempo de cada pessoa. Balneário Camboriú faz parte dessa perspectiva: urbana, aberta e conectada ao mar.',
   pages: {
     empresa: { label: 'Empresa', title: 'Um olhar próprio\nsobre estar.', description: 'Nossa identidade, nossos princípios e a visão que orienta a Urban Stay.', image: '/img/memoir-paper.png', alt: 'Jornal e luz natural em um ambiente de descanso' },
@@ -394,9 +400,6 @@ export const CORPORATE = {
     { title: 'Entre a arquitetura e o mar', text: 'O contraste entre a paisagem construída e a linha do horizonte dá à cidade uma identidade própria. É nesse encontro que a Urban Stay encontra parte de suas referências.' },
     { title: 'Um lugar de encontros', text: 'A cidade é também feita de conversas, pausas e trajetos cotidianos. Nosso olhar vai além da paisagem para considerar as relações que dão sentido a estar aqui.' },
   ],
-  nextTitle: 'Vamos abrir\nessa conversa?',
-  nextBody: 'Apresente sua empresa, compartilhe uma ideia ou conheça as possibilidades de conexão com a Urban Stay.',
-  contactLabel: 'Fale com a Urban Stay',
   contact: {
     email: 'comercial@urbanstay.example', phone: '+55 (00) 00000-0000', company: '[Razão social da Urban Stay]', registration: '[CNPJ a informar]', address: '[Endereço comercial a informar] · Balneário Camboriú, SC',
     notice: 'Dados de demonstração. Os canais oficiais serão informados em breve.',
@@ -405,19 +408,9 @@ export const CORPORATE = {
     subjects: ['Comercial', 'Parcerias', 'Imprensa', 'Institucional'],
     submit: 'Preparar mensagem', copy: 'Copiar mensagem', copied: 'Mensagem copiada.', copyError: 'Selecione e copie o texto abaixo.', prepared: 'Sua mensagem está pronta. Nenhum dado foi enviado.', privacy: 'Os dados ficam apenas nesta página e não são armazenados ao sair.',
   },
-  footerDescription: 'Um olhar sobre hospitalidade, pessoas e o lugar onde elas se encontram.',
-  footerNav: 'Explore a Urban Stay', footerContact: 'Contato comercial',
-  home: 'Início', menu: 'Menu', close: 'Fechar', skip: 'Pular para o conteúdo', discover: 'Conheça a Urban Stay',
+  home: 'Início', menu: 'Menu', close: 'Fechar', skip: 'Pular para o conteúdo',
 } as const
 
-/** Escalas editoriais derivadas de 9068:919 / 9111:4; sem novos nodes. */
-export const CORPORATE_LAYOUT = {
-  radius: RADIUS_WHEEL, label: 14, body: 18, intro: 22, description: 24,
-  footer: 26, gap: GRID.gutter, noteGap: 40, heading: 44, rowSpace: 48,
-  sectionGap: GRID.gutter * 2, display: 80, breadcrumbGap: 96,
-  title: EDITORIAL_LAYOUT.compactDestinationTitle, sectionSpace: 128,
-  top: EDITORIAL_LAYOUT.aboutTitle, photo: EDITORIAL_LAYOUT.destinationPhotoHeight,
-} as const
 
 /** Páginas internas: nova direção editorial sobre o grid de 9068:919.
  * As composições não têm nodes próprios; as medidas são decisões editoriais.

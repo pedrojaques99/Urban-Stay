@@ -114,20 +114,10 @@
 }
 
 /* ------------------------------------------------------------------
-   Nav: links encostam no botao da lista; o botao do menu so no celular.
-   Cada camada guarda o lugar da peca da outra (`.nav__ghost`).
+   Nav (dono, 28/09): logo, lista de abertura e Menu, em toda largura e
+   toda rota. Os links moram so no menu em tela cheia. Cada camada guarda
+   o lugar da peca da outra (`.nav__ghost`).
    ------------------------------------------------------------------ */
-.nav__links {
-  margin-left: auto;
-}
-
-/* a pagina em que a pessoa esta: sublinhada e sem a opacidade 0.8 */
-.nav__links a[aria-current="page"] {
-  opacity: 1;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.4em;
-}
 
 .nav__right {
   display: flex;
@@ -136,7 +126,7 @@
 }
 
 .nav-toggle {
-  display: none;
+  display: inline-grid;
   width: 2.75rem;
   height: 2.75rem;
   place-items: center;
@@ -159,7 +149,7 @@
   visibility: hidden;
 }
 
-/* menu do celular: <dialog> em tela cheia, Esc e foco nativos */
+/* menu: <dialog> em tela cheia, Noite Urbana; Esc e foco nativos */
 .menu {
   position: fixed;
   inset: 0;
@@ -169,9 +159,13 @@
   max-height: none;
   margin: 0;
   border: 0;
-  padding: 1rem var(--gutter) calc(1.5rem + env(safe-area-inset-bottom, 0px));
-  background: var(--areia-clara);
-  color: var(--noite-urbana);
+  padding: clamp(1rem, 2.2vw, 2rem) var(--gutter) calc(clamp(1.5rem, 3vw, 2.5rem) + env(safe-area-inset-bottom, 0px));
+  background: var(--noite-urbana);
+  color: var(--areia-clara);
+}
+
+.menu > * {
+  flex-shrink: 0;
 }
 
 .menu[open] {
@@ -194,26 +188,97 @@
 
 .menu__links {
   display: grid;
-  gap: 0.25rem;
-  margin-top: 2.5rem;
+  margin-top: auto;
 }
 
+/* escala do h1 das rotas, mas cabe na altura: 5 links + botao na tela */
 .menu__links a {
-  padding-block: 0.35rem;
+  justify-self: start;
+  padding-block: 0.1em;
   font-weight: 500;
-  font-size: clamp(2.25rem, 11vw, 3rem);
-  line-height: 1;
+  font-size: clamp(2.25rem, min(9.5vw, 12svh), 8.5rem);
+  line-height: 0.97;
   letter-spacing: -0.04em;
   text-transform: uppercase;
+  transition: translate 0.9s var(--ease-out), opacity 0.9s var(--ease-out);
 }
 
+/* cada link sobe ao abrir, em cascata (CSS nativo, sem JS) */
+@starting-style {
+  .menu[open] .menu__links a { translate: 0 40%; opacity: 0; }
+}
+.menu__links a:nth-child(2) { transition-delay: 0.05s; }
+.menu__links a:nth-child(3) { transition-delay: 0.1s; }
+.menu__links a:nth-child(4) { transition-delay: 0.15s; }
+.menu__links a:nth-child(5) { transition-delay: 0.2s; }
+
+.menu__links a:hover,
 .menu__links a[aria-current="page"] {
   opacity: 0.45;
 }
 
 .menu__cta {
-  margin-top: auto;
-  width: 100%;
+  align-self: flex-start;
+  margin-top: 2.5rem;
+}
+
+/* foto do link sob o ponteiro: so onde ha hover e espaco (desktop) */
+.menu__photos {
+  display: none;
+}
+
+@media (min-width: 1024px) and (hover: hover) {
+  /* grade: links embaixo a esquerda; foto e botao da lista na direita */
+  .menu[open] {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 34vw);
+    grid-template-rows: auto 1fr auto;
+    column-gap: var(--gutter);
+  }
+
+  .menu__close { grid-column: 2; grid-row: 1; justify-self: end; }
+  .menu__links { grid-column: 1; grid-row: 2 / 4; align-self: end; margin-top: 0; }
+
+  .menu__photos {
+    display: grid;
+    grid-column: 2;
+    grid-row: 2;
+    align-self: end;
+    justify-self: end;
+    /* a altura manda (cabe em qualquer janela); a largura sai da proporcao */
+    height: min(100%, 38rem);
+    max-width: 100%;
+    aspect-ratio: 4 / 5;
+    min-height: 0;
+    margin-top: 1.5rem;
+    overflow: hidden;
+    border-radius: 6px;
+  }
+
+  .menu__photos img {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    scale: 1.06;
+    transition: opacity 0.6s var(--ease-out), scale 1.2s var(--ease-out);
+  }
+
+  .menu__photos img.is-on {
+    opacity: 1;
+    scale: 1;
+  }
+
+  .menu__cta { grid-column: 2; grid-row: 3; justify-self: end; margin-top: 1.5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu__photos img { transition: none; scale: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu__links a { transition: none; }
 }
 
 /* ------------------------------------------------------------------
@@ -230,10 +295,6 @@
   .nav__logo {
     width: 8rem;
     height: auto;
-  }
-
-  .nav-toggle {
-    display: inline-grid;
   }
 
   .nav__right,
