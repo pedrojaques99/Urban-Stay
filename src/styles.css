@@ -531,3 +531,18 @@ html.is-loading {
      body nao propaga para o viewport e um `hidden` la nao travaria nada */
   overflow: hidden;
 }
+
+/* ------------------------------------------------------------------
+   Icones Phosphor. O span que embrulha o icone vira caixa flex: sem isso
+   o SVG senta na linha de base do texto e fica acima do centro, o mesmo
+   defeito da seta em caractere que ele substituiu. (medido 28/09)
+   ------------------------------------------------------------------ */
+span:has(> svg:only-child) {
+  display: inline-flex;
+  align-items: center;
+}
+
+a > svg,
+button > svg {
+  flex: none;
+}

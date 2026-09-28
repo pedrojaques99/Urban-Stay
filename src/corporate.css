@@ -22,11 +22,11 @@
 .nav__links a[aria-current="page"] { opacity: 1; text-decoration: underline; text-underline-offset: .4em; }
 .nav-menu-toggle { display: none; min-height: 2.75rem; }
 .mobile-menu { position: fixed; inset: 0; margin: 0; width: 100%; max-width: none; height: 100%; max-height: none; border: 0; padding: max(1.5rem, calc(var(--corporate-sectionGap) * var(--k))); background: var(--areia-clara); color: var(--noite-urbana); }
-.mobile-menu > button { display: block; margin-left: auto; padding: .75em 0 .75em 1em; }
+.mobile-menu > button { display: flex; align-items: center; gap: .35em; margin-left: auto; padding: .75em 0 .75em 1em; }
 .mobile-menu nav { display: flex; flex-direction: column; gap: 1em; margin-top: 3rem; }
 .mobile-menu nav a { font-size: 2rem; }
 @media (max-width: 1023px) {
-  .nav-menu-toggle { display: block; font-size: 1rem; }
+  .nav-menu-toggle { display: inline-flex; align-items: center; gap: .35em; font-size: 1rem; }
   .corporate-intro, .corporate-next, .corporate-contact, .corporate-columns { grid-template-columns: 1fr; }
   .corporate-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .footer-corporate { grid-template-columns: 1fr 1fr; }

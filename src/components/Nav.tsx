@@ -2,6 +2,8 @@ import { motion } from 'framer-motion'
 import { useRef } from 'react'
 import { CORPORATE, NAV_LINKS } from '../design'
 import { ENTER_DELAY, riseIn, sequence } from '../lib/motion'
+import { XIcon } from '@phosphor-icons/react/dist/csr/X'
+import { PlusIcon } from '@phosphor-icons/react/dist/csr/Plus'
 
 const NAV_STAGGER = 0.09
 const navSequence = sequence(NAV_STAGGER, ENTER_DELAY)
@@ -39,10 +41,10 @@ export function Nav() {
             </motion.span>
           ))}
         </motion.div>
-        <button className="nav-menu-toggle" ref={toggle} type="button" aria-haspopup="dialog" aria-controls="mobile-menu" onClick={() => menu.current?.showModal()}>{CORPORATE.menu} +</button>
+        <button className="nav-menu-toggle" ref={toggle} type="button" aria-haspopup="dialog" aria-controls="mobile-menu" onClick={() => menu.current?.showModal()}>{CORPORATE.menu} <PlusIcon aria-hidden="true" /></button>
       </nav>
       <dialog id="mobile-menu" className="mobile-menu" ref={menu} aria-label="Navegação principal" onClose={() => toggle.current?.focus()}>
-        <button type="button" onClick={() => menu.current?.close()}>{CORPORATE.close} ×</button>
+        <button type="button" onClick={() => menu.current?.close()}>{CORPORATE.close} <XIcon aria-hidden="true" /></button>
         <nav aria-label="Menu móvel"><a href="/">{CORPORATE.home}</a>{NAV_LINKS.map(link => <a key={link.href} href={link.href} aria-current={window.location.pathname === link.href ? 'page' : undefined}>{link.label}</a>)}</nav>
       </dialog>
     </>

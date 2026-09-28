@@ -4,6 +4,7 @@ import { CORPORATE, INTERNAL, INTERNAL_LAYOUT, LEGAL_LINKS, NAV_LINKS } from '..
 import type { CorporatePage } from './Corporate'
 import { imgProps } from '../lib/img'
 import '../internal.css'
+import { ArrowUpRightIcon } from '@phosphor-icons/react/dist/csr/ArrowUpRight'
 
 const layout = Object.fromEntries(Object.entries(INTERNAL_LAYOUT).map(([name, value]) => [`--i-${name}`, `${value}px`])) as CSSProperties
 type Photo = { src: string; alt: string; caption: string }
@@ -39,7 +40,7 @@ function Company() {
     <section className="company-city">
       <div className="internal-frame company-city__spread">
         <Photograph photo={content.closingPhoto} />
-        <div><h2>{content.closing}</h2><p>{content.closingText}</p><a className="internal-link" href="/destino.html">{content.closingLink}<span aria-hidden="true">↗</span></a></div>
+        <div><h2>{content.closing}</h2><p>{content.closingText}</p><a className="internal-link" href="/destino.html">{content.closingLink}<span aria-hidden="true"><ArrowUpRightIcon /></span></a></div>
       </div>
     </section>
   </>
@@ -58,7 +59,7 @@ function Activity() {
         <summary><h2>{item.title}</h2><span className="activity-entry__tag">{item.tag}</span><span className="activity-entry__toggle" aria-hidden="true" /></summary>
         <div className="activity-entry__body">
           <img {...imgProps(item.image, '(max-width: 1023px) 100vw, 40vw')} alt={item.alt} loading={index === 0 ? 'eager' : 'lazy'} />
-          <div><p className="activity-entry__lead">{item.text}</p><p>{item.detail}</p><a className="internal-link" href={item.href}>{item.link}<span aria-hidden="true">↗</span></a></div>
+          <div><p className="activity-entry__lead">{item.text}</p><p>{item.detail}</p><a className="internal-link" href={item.href}>{item.link}<span aria-hidden="true"><ArrowUpRightIcon /></span></a></div>
         </div>
       </details>)}
     </section>
@@ -76,7 +77,7 @@ function Destination() {
       </div>
     </header>
     <section className="internal-frame destination-story" aria-labelledby="destination-story-title">
-      <div className="destination-story__copy"><p className="internal-eyebrow">{content.label}</p><h2 id="destination-story-title">{content.statement}</h2>{content.paragraphs.map(text => <p key={text}>{text}</p>)}<a className="internal-link" href={content.mapHref} target="_blank" rel="noreferrer">{content.mapLabel}<span aria-hidden="true">↗</span></a><p className="internal-note">{content.note}</p></div>
+      <div className="destination-story__copy"><p className="internal-eyebrow">{content.label}</p><h2 id="destination-story-title">{content.statement}</h2>{content.paragraphs.map(text => <p key={text}>{text}</p>)}<a className="internal-link" href={content.mapHref} target="_blank" rel="noreferrer">{content.mapLabel}<span aria-hidden="true"><ArrowUpRightIcon /></span></a><p className="internal-note">{content.note}</p></div>
       <Photograph photo={content.detailPhoto} />
     </section>
   </>
@@ -112,7 +113,7 @@ function Contact() {
         <label>{content.email}<input name="email" type="email" autoComplete="email" required maxLength={254} /></label>
         <label>{content.subject}<select name="assunto" defaultValue={subject}>{details.subjects.map(item => <option key={item}>{item}</option>)}</select></label>
         <label className="contact-form__wide">{content.message}<textarea name="mensagem" rows={4} required maxLength={5000} /></label>
-        <div className="contact-form__submit"><p className="internal-note">{content.formNote}</p><button type="submit">{content.submit}<span aria-hidden="true">↗</span></button></div>
+        <div className="contact-form__submit"><p className="internal-note">{content.formNote}</p><button type="submit">{content.submit}<span aria-hidden="true"><ArrowUpRightIcon /></span></button></div>
         <p className="internal-note contact-form__wide">{content.privacy} <a href="/privacidade.html">{content.privacyLink}</a></p>
         <p className="contact-form__wide" role="status">{status}</p>
         {summary && <div className="contact-result contact-form__wide" ref={result} tabIndex={-1} aria-label={content.summaryTitle}><h3>{content.summaryTitle}</h3><pre>{summary}</pre><button className="internal-link" type="button" onClick={async () => { try { await navigator.clipboard.writeText(summary); setStatus(content.copied) } catch { setStatus(content.copyError) } }}>{content.copy}</button></div>}
@@ -134,8 +135,8 @@ export function InternalFooter({ page }: { page: CorporatePage }) {
   const next = INTERNAL.footer.next[page]
   return <footer className="internal-footer" style={layout}>
     <div className="internal-frame">
-      <a className="internal-next" href={next.href}><span className="internal-eyebrow">{INTERNAL.footer.nextLabel}</span><span>{next.label}</span><span aria-hidden="true">↗</span></a>
-      <div className="internal-footer__body"><div><a href="/" aria-label="Urban Stay — início"><img src="/img/logo.svg" alt="Urban Stay" /></a><p>{INTERNAL.footer.signature}</p></div><nav aria-label={INTERNAL.footer.linksLabel}>{NAV_LINKS.map(link => <a href={link.href} key={link.href}>{link.label}</a>)}</nav></div>
+      <a className="internal-next" href={next.href}><span className="internal-eyebrow">{INTERNAL.footer.nextLabel}</span><span>{next.label}</span><span aria-hidden="true"><ArrowUpRightIcon /></span></a>
+      <div className="internal-footer__body"><div><a href="/" aria-label="Urban Stay, voltar ao início"><img src="/img/logo.svg" alt="Urban Stay" /></a><p>{INTERNAL.footer.signature}</p></div><nav aria-label={INTERNAL.footer.linksLabel}>{NAV_LINKS.map(link => <a href={link.href} key={link.href}>{link.label}</a>)}</nav></div>
       <div className="internal-footer__bottom"><span>© {new Date().getFullYear()} Urban Stay®</span><nav aria-label={INTERNAL.footer.legalLabel}>{LEGAL_LINKS.map(link => <a href={link.href} key={link.href}>{link.label}</a>)}</nav></div>
     </div>
   </footer>

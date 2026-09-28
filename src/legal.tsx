@@ -12,7 +12,7 @@ function LegalPage() {
   const page = LEGAL_PAGES.find(item => item.href === window.location.pathname) ?? LEGAL_PAGES[0]
   return <>
     <a className="legal-skip" href="#conteudo">Ir para o conteúdo</a>
-    <header className="legal-header"><a href="/" aria-label="Urban Stay — página inicial"><img src="/img/logo.svg" alt="Urban Stay" width="202" height="20" /></a></header>
+    <header className="legal-header"><a href="/" aria-label="Urban Stay, voltar ao início"><img src="/img/logo.svg" alt="Urban Stay" width="202" height="20" /></a></header>
     <main id="conteudo" className="legal-main">
       <h1>{page.title}</h1>
       <p className="legal-date">Atualizado em 28 de setembro de 2026</p>
