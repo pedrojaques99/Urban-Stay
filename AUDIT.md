@@ -27,6 +27,7 @@ Depois do upgrade (branch `upgrade/mobile-first`). A home virou uma página que 
 | src/components/Stage.tsx | A | primeira impressão de marca no desktop | intacto, só o CTA mudou |
 | src/components/MobileStage.tsx | A | primeira impressão de marca no celular sem custar rolagem | 1 tela de show, trio de molduras |
 | src/components/Story.tsx | A | leitura dos 6 benefícios no polegar | foto 4:5, título ≥ 32px, contador fixo |
+| src/components/Reveal.tsx | A | leitura das dobras na ordem certa (título, foto, texto), igual em todas as rotas | revelações compartilhadas por home e páginas próprias |
 | src/components/Sections.tsx | A | inscrições na lista de abertura; confiança no lugar (Rua 902) | formulário nome + WhatsApp, sem fingir envio |
 | src/components/Loader.tsx | A | tempo até o título (LCP) | só o pulso, 0,8s mínimo, teto de fonte 2,5s |
 | src/components/InternalPages.tsx | A | confiança institucional (a decidir pelo cliente) | preservado |
@@ -57,6 +58,16 @@ Tela vista em `vite dev` :5199, 390 e 1440, página inteira rolada (empresa, atu
 - acordeão abrindo suave (altura 457 → 770px em ~400ms), ícone Phosphor
 - contato com botão Brasa e campos no desenho da lista; legais com a nav e o rodapé do site
 - `refine-scan` zero, `motion-lint` limpo, `killer-scan` copy/ruído/impeccable zero; sem erro de console
+
+### Audit geral final (28/09): hierarquia, limpeza, bugs de UI/UX e scroll
+
+- **Uma ação Brasa por vez**: eram 2 na tela em quase todo ponto (nav + herói, nav + formulário, nav + rodapé). Medido depois: 1 em topo, lista e rodapé; a nav só aparece quando nenhuma outra está à vista.
+- Destino dizia "Balneário Camboriú" em três tamanhos (rótulo, sobretítulo, título): sobretítulo fora.
+- Rodapé mobile em duas colunas; vão duplo da Atuação fechado.
+- **Bug**: bloco alto (acordeão aberto) ficava em opacidade 0 com 24% à vista. Gatilho do `Rise` independente da altura.
+- **Bug de scroll**: o botão da lista vindo das outras páginas caía no topo da home (y=0, lista a 6000px). Agora cai na lista (topo 0), em 390 e 1440.
+- **Bug de sobreposição**: no fim da home o logo passava sobre o formulário; a faixa da nav acende sobre a lista.
+- Sonda de scroll (roda no desktop, toque bruto no celular), 6 rotas: 0 reversão, 0 salto > 250px, 0 layout shift, 0 frame > 50ms, 0 erro.
 
 ## Achados (confirmados em arquivo:linha)
 

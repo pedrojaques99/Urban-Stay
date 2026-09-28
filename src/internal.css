@@ -46,7 +46,7 @@
 /* Atuação: índice tipográfico. O conteúdo abre na própria linha. */
 .activity-cover h1 { margin: calc(var(--i-subtitle) * var(--k)) 0 calc(var(--i-heading) * var(--k)); }
 .activity-cover > p { margin: 0 0 calc(var(--i-space) * var(--k)) auto; max-width: 36ch; }
-.activity-index { padding-bottom: calc(var(--i-section) * var(--k)); }
+.activity-index { padding-bottom: clamp(3rem, 7vw, 6rem); }
 .activity-entry { border-top: 1px solid currentColor; }
 .activity-entry:last-child { border-bottom: 1px solid currentColor; }
 .activity-entry summary { display: grid; grid-template-columns: 7fr 4fr auto; align-items: center; gap: calc(var(--i-gutter) * var(--k)); padding-block: calc(var(--i-heading) * var(--k)); cursor: pointer; list-style: none; }

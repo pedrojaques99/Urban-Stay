@@ -146,6 +146,18 @@
   visibility: hidden;
 }
 
+/* quieto enquanto outro botao da lista esta na tela (Nav.tsx). Opacidade no
+   wrapper: o <a> tem opacidade inline da entrada do framer. `visibility`
+   tira do tab e do clique junto. */
+.nav-cta {
+  transition: opacity 0.3s var(--ease-out), visibility 0.3s;
+}
+
+.nav-cta.is-quiet {
+  opacity: 0;
+  visibility: hidden;
+}
+
 /* menu do celular: <dialog> em tela cheia, Esc e foco nativos */
 .menu {
   position: fixed;
@@ -605,7 +617,9 @@
 
 .site-footer__nav {
   display: grid;
-  gap: 0.75rem;
+  grid-template-columns: repeat(2, max-content);
+  column-gap: 3rem;
+  gap: 0.75rem 3rem;
   align-content: start;
   font-size: 1rem;
 }
@@ -674,7 +688,7 @@
   .lista__copy { grid-column: 8 / -1; }
 
   .site-footer__about { grid-column: 1 / 6; }
-  .site-footer__nav { grid-column: 7 / 9; }
+  .site-footer__nav { grid-column: 7 / 9; grid-template-columns: max-content; }
   .site-footer__cta { grid-column: 9 / -1; justify-self: end; align-self: start; }
   .site-footer__mark,
   .site-footer__bottom { grid-column: 1 / -1; }

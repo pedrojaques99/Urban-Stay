@@ -29,19 +29,44 @@ const current = (href: string) => (window.location.pathname === href ? 'page' : 
 export function Nav({ solid = false }: { solid?: boolean }) {
   const menu = useRef<HTMLDialogElement>(null)
   const toggle = useRef<HTMLButtonElement>(null)
-  // faixa Areia atras da nav nas paginas sem foto, depois do primeiro scroll
+  // Faixa Areia atras da nav: nas paginas sem foto (`solid`) depois do
+  // primeiro scroll, e na home so enquanto uma secao de texto sem foto
+  // (`data-nav-band`, a lista) passa por baixo da nav. Sobre foto e sobre a
+  // Mare Funda a mesclagem pura continua (AGENTS.md > Navbar).
   const [band, setBand] = useState(false)
   useEffect(() => {
-    if (!solid) return
-    const check = () => setBand(window.scrollY > 8)
+    const zones = [...document.querySelectorAll('[data-nav-band]')]
+    if (!solid && !zones.length) return
+    const check = () => {
+      if (solid) return setBand(window.scrollY > 8)
+      const under = zones.some((z) => { const r = z.getBoundingClientRect(); return r.top < 96 && r.bottom > 0 })
+      setBand(under)
+    }
     check()
     window.addEventListener('scroll', check, { passive: true })
     return () => window.removeEventListener('scroll', check)
   }, [solid])
 
+  // Uma acao Brasa visivel por vez: o botao da nav fica quieto enquanto
+  // outro botao da lista (heroi, formulario, rodape, contato: `data-cta`)
+  // estiver na tela. Dois botoes iguais lado a lado viravam realce que nao
+  // decide nada. (auditoria 28/09)
+  const [quiet, setQuiet] = useState(false)
+  useEffect(() => {
+    const targets = document.querySelectorAll('[data-cta]')
+    if (!targets.length) return
+    const seen = new Set<Element>()
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => (e.isIntersecting ? seen.add(e.target) : seen.delete(e.target)))
+      setQuiet(seen.size > 0)
+    })
+    targets.forEach((t) => io.observe(t))
+    return () => io.disconnect()
+  }, [])
+
   return (
     <>
-      {solid && <div className={`nav-band${band ? ' is-on' : ''}`} aria-hidden="true" />}
+      <div className={`nav-band${band ? ' is-on' : ''}`} aria-hidden="true" />
       <nav className="nav" aria-label="Principal">
         <motion.a className="nav__logo" href="/" aria-label="Urban Stay, início" variants={navLogo} initial="hidden" animate="show">
           <img src="/img/logo.svg" alt="Urban Stay" width={202} height={20} />
@@ -72,7 +97,7 @@ export function Nav({ solid = false }: { solid?: boolean }) {
         </span>
       </nav>
 
-      <div className="nav-cta">
+      <div className={`nav-cta${quiet ? ' is-quiet' : ''}`}>
         <motion.a className="btn btn--brasa" href={toHome(`#${SECTION.lista}`)} variants={navCta} initial="hidden" animate="show">
           {SITE.ctaShort}
         </motion.a>

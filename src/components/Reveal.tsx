@@ -23,6 +23,11 @@ const TAGS = { h1: motion.h1, h2: motion.h2, h3: motion.h3, p: motion.p }
 const titleSeq = (delay: number) => sequence(0.06, delay)
 const titleWord = wordRise('110%')
 const inView = { once: true, amount: 0.5 } as const
+/** Bloco de texto pode ser mais alto que a tela. Com fracao (0.5, e ate 0.15)
+ *  o acordeao aberto da Atuacao ficou em opacidade 0 com 24% dele a vista.
+ *  O gatilho aqui independe da altura: qualquer pedaco visivel, 10% acima
+ *  do pe da tela. (medido 28/09) */
+const blockInView = { once: true, amount: 'some', margin: '0px 0px -10% 0px' } as const
 
 export function MaskTitle({
   text,
@@ -64,7 +69,7 @@ const rise = riseIn(1, 0.25)
 export function Rise({ children, className, as = 'div' }: { children: ReactNode; className?: string; as?: 'div' | 'p' }) {
   const Tag = as === 'p' ? motion.p : motion.div
   return (
-    <Tag className={className} variants={rise} initial="hidden" whileInView="show" viewport={inView}>
+    <Tag className={className} variants={rise} initial="hidden" whileInView="show" viewport={blockInView}>
       {children}
     </Tag>
   )

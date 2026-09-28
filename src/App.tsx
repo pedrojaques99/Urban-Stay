@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, MotionConfig } from 'framer-motion'
 import { Loader } from './components/Loader'
 import { Nav } from './components/Nav'
@@ -33,6 +33,19 @@ export default function App() {
   // identidade estavel: o efeito do Loader depende de `onDone`
   const done = useCallback(() => setLoading(false), [])
 
+  // Chegou com ancora (`/#lista`, o botao da lista nas outras paginas): o
+  // loader forca o topo enquanto cobre a tela, entao a rolagem ate a ancora
+  // acontece quando ele sai. Sem isto o botao levava para o heroi, com a
+  // lista 6000px abaixo. (medido 28/09)
+  useEffect(() => {
+    if (loading || !window.location.hash) return
+    const target = document.querySelector(window.location.hash)
+    if (!target) return
+    requestAnimationFrame(() => {
+      window.scrollTo(0, target.getBoundingClientRect().top + window.scrollY)
+    })
+  }, [loading])
+
   return (
     // `reducedMotion="user"` acompanha o mesmo respeito que o Lenis ja tem
     // por `prefers-reduced-motion`: as entradas viram corte seco, sem curso.
@@ -56,7 +69,7 @@ export default function App() {
         )}
       </main>
       {page && <NextPage page={page} />}
-      <Footer />
+      <Footer cta={Boolean(page)} />
     </MotionConfig>
   )
 }

@@ -422,7 +422,6 @@ export const INTERNAL = {
   },
   destination: {
     title: ['Balneário', 'Camboriú.'],
-    region: 'Santa Catarina · Brasil',
     photo: { src: '/img/window.png', alt: 'Pessoa junto à janela, com vista para os prédios e o mar', caption: 'A orla pela janela.' },
     label: 'O destino',
     statement: 'A cidade,\nlogo ali.',

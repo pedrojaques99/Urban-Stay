@@ -41,6 +41,10 @@ The home is now **one page that sells the stay**. The venue does not operate yet
 - The loader's full-screen background is the home's LCP. It is served as **lossless** WebP (`opt/bg-gradient.webp`, pixel-identical, 66KB) with `preload`. Lossy WebP destroys the grain.
 - `.story__list` has no `gap`; spacing is padding inside each item. With a gap, the mid-screen line fell between items and the counter froze.
 - Phosphor icons sit above the text baseline unless their wrapper is flex (`span:has(> svg:only-child)` in styles.css).
+- The loader forces the top while it covers the page. Arriving with a hash (`/#lista` from the other pages) scrolls to it in `App.tsx` when the loader leaves; without that the waitlist button landed on the hero.
+- `Rise` (tall text blocks) triggers on `amount: 'some'` + bottom margin, never a fraction: with 0.5, and even 0.15, the open Atuação accordion stayed at opacity 0 with 24% of it on screen.
+- **One Brasa action on screen at a time**: CTAs carry `data-cta`; the nav pill goes quiet (`.nav-cta.is-quiet`) while any of them is visible. The home footer has no CTA (the form is right above it).
+- The nav band also turns on over `data-nav-band` sections on the home (the waitlist: text on the gradient, no photo).
 
 No test or lint scripts. TypeScript is strict (`noUnusedLocals`, `noUnusedParameters`, `verbatimModuleSyntax`). `npm run build` is the typecheck.
 

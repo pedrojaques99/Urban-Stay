@@ -104,7 +104,7 @@ export function Waitlist() {
   const message = status === 'done' ? copy.done : status === 'prototype' ? copy.prototype : status === 'error' ? copy.error : status === 'sending' ? copy.sending : ''
 
   return (
-    <section className="lista" id={SECTION.lista}>
+    <section className="lista" id={SECTION.lista} data-nav-band>
       <div className="site-frame lista__grid">
         <div className="lista__trio" aria-hidden="true">
           {TRIO.map((item, i) => {
@@ -144,7 +144,7 @@ export function Waitlist() {
                 aria-invalid={Boolean(errors.whatsapp)} aria-describedby={errors.whatsapp ? 'lista-whatsapp-erro' : undefined} />
               {errors.whatsapp && <small id="lista-whatsapp-erro">{errors.whatsapp}</small>}
             </label>
-            <button className="btn btn--brasa btn--lg" type="submit" disabled={status === 'sending' || status === 'done'}>
+            <button className="btn btn--brasa btn--lg" type="submit" data-cta disabled={status === 'sending' || status === 'done'}>
               {SITE.cta}
             </button>
             <p className="lista__status" role="status" aria-live="polite">{message}</p>
@@ -161,7 +161,12 @@ export function Waitlist() {
 /* ------------------------------------------------------------------
    Rodape — Noite Urbana, wordmark em Areia (o vault proibe o escuro aqui).
    ------------------------------------------------------------------ */
-export function Footer() {
+/**
+ * `cta`: o botao da lista no rodape. Na home ele sai, porque o formulario
+ * esta logo acima e os dois ficavam na tela juntos (auditoria 28/09). Nas
+ * outras paginas e o caminho para a lista, e fica.
+ */
+export function Footer({ cta = true }: { cta?: boolean }) {
   return (
     <footer className="site-footer">
       <div className="site-frame site-footer__grid">
@@ -173,10 +178,12 @@ export function Footer() {
           <a href="/">{SITE.footer.home}</a>
           {INSTITUTIONAL_LINKS.map((link) => <a key={link.href} href={link.href}>{link.label}</a>)}
         </nav>
-        <a className="btn btn--brasa btn--lg site-footer__cta" href={toHome(`#${SECTION.lista}`)}>
-          {SITE.cta}
-          <ArrowUpRightIcon aria-hidden="true" />
-        </a>
+        {cta && (
+          <a className="btn btn--brasa btn--lg site-footer__cta" data-cta href={toHome(`#${SECTION.lista}`)}>
+            {SITE.cta}
+            <ArrowUpRightIcon aria-hidden="true" />
+          </a>
+        )}
         <img className="site-footer__mark" src="/img/logo-areia.svg" alt="Urban Stay" width={202} height={20} loading="lazy" />
         <div className="site-footer__bottom">
           <span>© {new Date().getFullYear()} Urban Stay®</span>

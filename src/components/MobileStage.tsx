@@ -175,7 +175,7 @@ export function MobileStage({ ready }: { ready: boolean }) {
           </motion.h1>
           <motion.div className="m-hero__rest" variants={heroRest} initial="hidden" animate="show">
             <p className="m-hero__lead">{HERO.lead}</p>
-            <a className="btn btn--brasa btn--lg" href={`#${SECTION.lista}`}>{SITE.cta}</a>
+            <a className="btn btn--brasa btn--lg" href={`#${SECTION.lista}`} data-cta>{SITE.cta}</a>
           </motion.div>
         </div>
       </div>
