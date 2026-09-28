@@ -1,6 +1,6 @@
 # Urban Stay — plano de upgrade (fork)
 
-Status: **fases 1–6 feitas; 7 (entrega) em andamento** · 28/09/2026 · auditoria em [AUDIT.md](AUDIT.md) (42/100)
+Status: **entregue** em https://urban-stay-steel.vercel.app (noindex) · 28/09/2026 · auditoria em [AUDIT.md](AUDIT.md) (42/100)
 
 ## Pré-voo — 28/09/2026
 
