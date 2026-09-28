@@ -86,7 +86,7 @@ Trust the **code** over README / CSS comments when they disagree. Known stale no
 
 ## The scroll show (`Stage.tsx`)
 
-One sticky `100svh` stage inside an `820svh` track. One `ScrollTrigger` (`start: top top`, `end: bottom bottom`). **No per-card tweens.** Every frame, `draw(progress)` writes `transform` / `opacity` / `border-radius` onto the 12 card nodes.
+One sticky `100svh` stage inside a ~`578svh` track (was 820 until 28/09: the strip now stops only at `STRIP_STOPS`, max 3, see below). One `ScrollTrigger` (`start: top top`, `end: bottom bottom`). **No per-card tweens.** Every frame, `draw(progress)` writes `transform` / `opacity` / `border-radius` onto the 12 card nodes.
 
 Progress windows (they overlap on purpose so no card ever rests between phases):
 
@@ -97,6 +97,8 @@ Progress windows (they overlap on purpose so no card ever rests between phases):
 | `0.33 → …` | hero unpins and rises at exact scroll speed |
 | `0.38 → 0.46` | first benefit copy rises through a mask |
 | `0.44 → 1.00` | strip walks card to card |
+
+These windows are the ORIGINAL fractions of the 720vh **pin distance** (track − 100svh; ScrollTrigger progress runs on it). `Stage.tsx` rescales them with `at()` so the wheel keeps its absolute length and only the strip shrinks. The strip stops at `STRIP_STOPS` in `design.ts` (max 3, card indices): the tape walks through the cards in between but copy exists only for the stops. The "Nossa moldura" anchor is a `.stage-anchor` in the TRACK at the strip start, never an element inside the sticky stage (that landed in the wheel).
 
 If you change a window, re-check the overlaps. A gap between wheel and strip is a regression.
 

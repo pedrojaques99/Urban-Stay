@@ -10,6 +10,7 @@ import {
   HERO,
   SECTION,
   SITE,
+  STRIP_STOPS,
   RADIUS_ROW,
   RADIUS_WHEEL,
   ROW_CENTER_Y,
@@ -32,10 +33,9 @@ import { imgProps } from '../lib/img'
 
 gsap.registerPlugin(ScrollTrigger)
 
-/** Altura total do trecho fixado, em viewports. */
-const TRACK_VH = 820
+/* --- marcos do timeline -----------------------------------------------
+   Medidos no trecho ORIGINAL de 820vh (roda + 6 paradas da esteira):
 
-/* --- marcos do timeline, em progresso normalizado do trecho fixado ---
    0.00 → 0.35   a roda nasce no centro, gira e cresce ate o frame 9068:893
    0.29 → 0.44   a roda continua girando enquanto se desenrola na esteira
    0.33 → ...    a headline se solta do centro e sobe junto com o scroll
@@ -43,14 +43,31 @@ const TRACK_VH = 820
    0.44 → 1.00   a esteira anda: quem encosta na margem cresce, o resto encolhe
 
    As janelas se sobrepoem de proposito — nenhum card chega a parar entre
-   uma fase e a seguinte. */
-const WHEEL_END = 0.35
-const BENCH_START = 0.29
-const BENCH_END = 0.44
-const HERO_RELEASE = 0.33
-const COPY_IN_START = 0.38
-const COPY_IN_END = 0.46
-const CAROUSEL_START = 0.44
+   uma fase e a seguinte.
+
+   Desde 28/09 a esteira para so em `STRIP_STOPS` (no maximo 3): seis
+   paradas presas eram repetitivas e intrusivas. A roda mantem o mesmo
+   comprimento em vh; so o trecho da esteira encolhe, com o mesmo passo
+   por parada. Por isso os marcos abaixo sao reescalados de 820 para o
+   trecho novo, e nao mantidos como fracao. */
+const ORIGINAL_VH = 820
+/** O progresso do ScrollTrigger corre sobre a distancia FIXADA: a trilha
+ *  menos uma tela de palco (100svh). E nela que os marcos sao medidos. */
+const ORIGINAL_PIN = ORIGINAL_VH - 100
+/** vh de rolagem por parada da esteira no desenho original: (720 * 0.56) / 5 */
+const STEP_VH = (ORIGINAL_PIN * (1 - 0.44)) / 5
+const PIN_VH = ORIGINAL_PIN * 0.44 + STEP_VH * (STRIP_STOPS.length - 1)
+/** Altura total do trecho fixado, em viewports. */
+const TRACK_VH = PIN_VH + 100
+const at = (original: number) => (original * ORIGINAL_PIN) / PIN_VH
+
+const WHEEL_END = at(0.35)
+const BENCH_START = at(0.29)
+const BENCH_END = at(0.44)
+const HERO_RELEASE = at(0.33)
+const COPY_IN_START = at(0.38)
+const COPY_IN_END = at(0.46)
+const CAROUSEL_START = at(0.44)
 
 /** Graus que a roda gira ate assentar… */
 const SPIN = 148
@@ -175,12 +192,17 @@ export function Stage() {
       // usado pelos ecos, que nao tem origem na roda
       const benchP = easeInOutCubic(range(p, BENCH_START, BENCH_END))
 
-      // Indice ativo: 0 no primeiro card, 5 no ultimo. `settle` da uma
-      // acomodada em cada parada sem chegar a travar entre elas.
-      const steps = CARDS.length - 1
-      const rawActive = range(p, CAROUSEL_START, 1) * steps
-      const step = Math.min(steps - 1, Math.floor(rawActive))
-      const active = steps === 0 ? 0 : step + settle(rawActive - step)
+      // Parada ativa: 0 no primeiro destaque, STRIP_STOPS.length - 1 no
+      // ultimo. `settle` da uma acomodada em cada parada sem travar entre
+      // elas. `active` e a mesma coisa em indice de CARD: a fita anda de um
+      // destaque ao outro, passando pelos cards do meio.
+      const steps = STRIP_STOPS.length - 1
+      const rawStop = range(p, CAROUSEL_START, 1) * steps
+      const step = Math.min(steps - 1, Math.floor(rawStop))
+      const stop = steps === 0 ? 0 : step + settle(rawStop - step)
+      const active = steps === 0
+        ? STRIP_STOPS[0]
+        : lerp(STRIP_STOPS[step], STRIP_STOPS[step + 1], stop - step)
 
       layoutRow(active, row)
 
@@ -268,11 +290,11 @@ export function Stage() {
       // espera abaixo da mascara; quem ja passou sai por cima. A troca
       // acontece no meio do caminho entre duas paradas, entao nunca ha dois
       // textos visiveis ao mesmo tempo.
-      for (let i = 0; i < CARDS.length; i++) {
+      for (let i = 0; i < STRIP_STOPS.length; i++) {
         const block = copyRefs.current[i]
         if (!block) continue
 
-        const d = active - i
+        const d = stop - i
         // para onde este bloco deve ir: quem ainda vem espera embaixo,
         // quem ja passou sai por cima
         const dir = -Math.sign(d)
@@ -331,6 +353,16 @@ export function Stage() {
 
   return (
     <div className="stage-track" ref={trackRef} style={{ height: `${TRACK_VH}svh` }}>
+      {/* A ancora de "Nossa moldura" fica na TRILHA, no ponto de scroll em
+          que a esteira comeca. O texto dos beneficios vive dentro do palco
+          fixado: ancorar nele levava o link para o nascimento da roda (do
+          topo) ou para um ponto qualquer (do meio). (medido 28/09) */}
+      <span
+        id={SECTION.casa}
+        className="stage-anchor"
+        style={{ top: `${CAROUSEL_START * PIN_VH}svh` }}
+        aria-hidden="true"
+      />
       <div className="stage">
         {STRIP.map((slot, j) => (
           <div
@@ -394,8 +426,8 @@ export function Stage() {
           </motion.div>
         </div>
 
-        <div className="benefits" id="a-casa">
-          {CARDS.map((card, i) => (
+        <div className="benefits">
+          {STRIP_STOPS.map((index) => CARDS[index]).map((card, i) => (
             <div
               key={card.photo.id}
               className="benefit"

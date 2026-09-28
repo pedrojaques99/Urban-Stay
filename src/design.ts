@@ -231,18 +231,25 @@ export const HERO = {
    lista de abertura. Nada de avaliacao, nota ou numero sem fonte.
    ------------------------------------------------------------------ */
 
+/**
+ * Os beneficios em que a esteira do desktop PARA (indices de CARDS). No
+ * maximo 3: mais que isso vira scroll preso repetitivo. A roda continua com
+ * as 6 fotos; o celular mostra os 6 beneficios em rolagem livre (Story).
+ */
+export const STRIP_STOPS = [0, 2, 5] as const
+
 /** ancoras da pagina; o `id` de cada secao usa o mesmo valor */
 export const SECTION = {
   top: 'top',
-  casa: 'a-casa',
-  rua: 'rua-902',
+  casa: 'nossa-moldura',
+  rua: 'localizacao',
   lista: 'lista',
 } as const
 
 /** ancoras da home; fora dela, `toHome()` prefixa `/` para voltar e rolar */
 export const NAV_LINKS = [
-  { label: 'A casa', href: `#${SECTION.casa}` },
-  { label: 'Rua 902', href: `#${SECTION.rua}` },
+  { label: 'Nossa moldura', href: `#${SECTION.casa}` },
+  { label: 'Localização', href: `#${SECTION.rua}` },
 ] as const
 
 export const toHome = (hash: string) => (window.location.pathname === '/' ? hash : `/${hash}`)
@@ -253,7 +260,7 @@ export const SITE = {
   ctaShort: 'Lista de abertura',
 
   story: {
-    label: 'A casa',
+    label: 'Nossa moldura',
     /** leitor de tela: "Benefício 2 de 6" */
     counter: (n: number, total: number) => `Benefício ${n} de ${total}`,
   },

@@ -226,6 +226,14 @@ a {
 /* ------------------------------------------------------------------
    Palco fixo: roda de imagens + headline
    ------------------------------------------------------------------ */
+.stage-anchor {
+  position: absolute;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
 .stage-track {
   position: relative;
   /* fica acima da secao seguinte: a linha de fotos transborda o palco
