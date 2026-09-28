@@ -47,6 +47,17 @@ Depois (28/09, tarde), Playwright chromium, `vite dev` :5180 e build em `vite pr
 - corta-scan: nenhum corte real. Acusados e confirmados como desenho: nav-cta sobre a nav mesclada (duas camadas, AGENTS.md), benefícios empilhados da esteira desktop, título display com line-height 0,97 (vault).
 - Lighthouse mobile (build): home perf 88 · a11y 100 · boas práticas 100 · LCP 3,6s · CLS 0 · 528KB. Empresa perf 94 · a11y 100 · LCP 2,8s · CLS 0. SEO 66 por causa do `noindex` de protótipo (intencional).
 
+### Rodada de refino nas rotas próprias (28/09, noite)
+
+Tela vista em `vite dev` :5199, 390 e 1440, página inteira rolada (empresa, atuação, destino, contato, privacidade):
+- títulos no padrão do vault e na mesma escala em todas as rotas; rótulos num desenho só, com colchete
+- uma Moldura Urbana por página (detalhe da Empresa, mesa do Destino); fotos de 404px trocadas na Atuação
+- revelações compartilhadas com a home (`Reveal.tsx`), disparadas em todas as dobras
+- faixa Areia atrás da nav só depois do scroll (opacidade 0 → 1 medida); home sem faixa
+- acordeão abrindo suave (altura 457 → 770px em ~400ms), ícone Phosphor
+- contato com botão Brasa e campos no desenho da lista; legais com a nav e o rodapé do site
+- `refine-scan` zero, `motion-lint` limpo, `killer-scan` copy/ruído/impeccable zero; sem erro de console
+
 ## Achados (confirmados em arquivo:linha)
 
 ### Raiz — consertar primeiro

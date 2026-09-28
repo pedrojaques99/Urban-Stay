@@ -30,6 +30,8 @@ The home is now **one page that sells the stay**. The venue does not operate yet
 - Waitlist destination: `VITE_WAITLIST_ENDPOINT` (POST JSON). Unset = prototype: the form validates and says nothing was sent. Never fake a success.
 - Photos: `imgProps(src, sizes, boxRatio)` from `lib/img.ts`. Pass the box ratio when the photo is cropped with `object-fit: cover`, or the browser downloads a size too small (landscape `window.png` in a 4:5 box was blurry).
 - Icons: `@phosphor-icons/react`, imported per file (`@phosphor-icons/react/dist/csr/ArrowUpRight`). Never an arrow character or a hand-drawn SVG.
+- **Reveals are shared** (`components/Reveal.tsx`): `MaskTitle` (caps title rising word by word through a mask), `RevealPhoto` (photo opening from the sides, `moldura` for the one Moldura Urbana moment per page), `Rise`. Home sections and institutional pages use the same ones; never copy a reveal into a component.
+- **Institutional and legal pages** follow the vault type: h1 Medium, caps, -4%, leading .97, one scale for every route (`clamp(3rem, 9.5vw, 8.5rem)`). Labels are one design: .75rem caps, tracking .16em, location in the brand bracket. `<Nav solid />` adds an Areia band behind the nav after the first scroll (pages without photos only; the home keeps the pure blend). Accordions open with native `::details-content` + `interpolate-size`, icon Phosphor `Plus` rotated 45°.
 - Motion durations for reveals live in `DUR` (`lib/motion.ts`). `node ~/.claude/skills/visant-motion/scripts/motion-lint.mjs src` must stay clean.
 
 ### Scars (do not reintroduce)

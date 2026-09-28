@@ -120,6 +120,14 @@
   margin-left: auto;
 }
 
+/* a pagina em que a pessoa esta: sublinhada e sem a opacidade 0.8 */
+.nav__links a[aria-current="page"] {
+  opacity: 1;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.4em;
+}
+
 .nav__right {
   display: flex;
   align-items: center;
@@ -678,3 +686,98 @@
 @media (max-width: 1023px) {
   .lista__form .btn { width: 100%; }
 }
+
+/* ------------------------------------------------------------------
+   Revelacoes compartilhadas (components/Reveal.tsx), 28/09
+   ------------------------------------------------------------------ */
+/* titulo em varias linhas: cada linha e um bloco */
+.mask-line {
+  display: block;
+}
+
+.reveal-photo {
+  margin: 0;
+  min-width: 0;
+}
+
+.reveal-photo__frame {
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.reveal-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* o UM momento de Moldura Urbana da pagina: a foto e a janela */
+.reveal-photo--moldura .reveal-photo__frame {
+  border-radius: 0;
+}
+
+.reveal-photo--moldura img {
+  clip-path: polygon(50% 0%, 100% 13%, 100% 87%, 50% 100%, 0% 87%, 0% 13%);
+}
+
+/* ------------------------------------------------------------------
+   Acordeao nativo que abre suave. `interpolate-size` deixa `block-size`
+   animar ate `auto`; sem suporte, abre seco, como antes. Sem JS.
+   ------------------------------------------------------------------ */
+:root {
+  interpolate-size: allow-keywords;
+}
+
+@supports selector(::details-content) {
+  .activity-entry::details-content,
+  .contact-company::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition: block-size 0.5s var(--ease-out), content-visibility 0.5s allow-discrete;
+  }
+
+  .activity-entry[open]::details-content,
+  .contact-company[open]::details-content {
+    block-size: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .activity-entry::details-content,
+  .contact-company::details-content,
+  .activity-entry__toggle,
+  .contact-company summary > span {
+    transition: none;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Faixa da nav nas paginas sem foto (proprias e legais). Na home a nav
+   mescla direto sobre gradiente e foto (AGENTS.md). Aqui o conteudo e
+   texto sobre creme, e rolar punha titulo por baixo de logo e links: a
+   faixa Areia entra atras da nav so depois do primeiro scroll. Ela e o
+   fundo da mesclagem, entao o `difference` continua valendo.
+   ------------------------------------------------------------------ */
+.nav-band {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 39;
+  height: calc(64px * var(--k) + 48px * var(--k));
+  background: var(--areia-clara);
+  border-bottom: 1px solid color-mix(in srgb, var(--noite-urbana) 12%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s var(--ease-out);
+}
+
+.nav-band.is-on {
+  opacity: 1;
+}
+
+@media (max-width: 1023px) {
+  .nav-band {
+    height: calc(1rem * 2 + 2.75rem);
+  }
+}
+

@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ListIcon } from '@phosphor-icons/react/dist/csr/List'
 import { XIcon } from '@phosphor-icons/react/dist/csr/X'
@@ -26,12 +26,22 @@ const current = (href: string) => (window.location.pathname === href ? 'page' : 
  * 28/09). A lista de abertura mora na home, entao o botao vai para `/#lista`.
  * No celular os links vao para o menu; o botao da lista fica sempre a vista.
  */
-export function Nav() {
+export function Nav({ solid = false }: { solid?: boolean }) {
   const menu = useRef<HTMLDialogElement>(null)
   const toggle = useRef<HTMLButtonElement>(null)
+  // faixa Areia atras da nav nas paginas sem foto, depois do primeiro scroll
+  const [band, setBand] = useState(false)
+  useEffect(() => {
+    if (!solid) return
+    const check = () => setBand(window.scrollY > 8)
+    check()
+    window.addEventListener('scroll', check, { passive: true })
+    return () => window.removeEventListener('scroll', check)
+  }, [solid])
 
   return (
     <>
+      {solid && <div className={`nav-band${band ? ' is-on' : ''}`} aria-hidden="true" />}
       <nav className="nav" aria-label="Principal">
         <motion.a className="nav__logo" href="/" aria-label="Urban Stay, início" variants={navLogo} initial="hidden" animate="show">
           <img src="/img/logo.svg" alt="Urban Stay" width={202} height={20} />

@@ -1,9 +1,10 @@
-import { Fragment, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import { ArrowUpRightIcon } from '@phosphor-icons/react/dist/csr/ArrowUpRight'
 import { CARDS, INSTITUTIONAL_LINKS, LEGAL_LINKS, SECTION, SITE, toHome } from '../design'
-import { DUR, EASE_MASK, riseIn, sequence, wordRise, words } from '../lib/motion'
+import { DUR, EASE_MASK, riseIn } from '../lib/motion'
+import { MaskTitle } from './Reveal'
 import { imgProps } from '../lib/img'
 
 /**
@@ -12,24 +13,7 @@ import { imgProps } from '../lib/img'
  * `figma * --k` (a regra do AGENTS.md vale para o que veio do art-board).
  */
 
-const titleSeq = sequence(0.06, 0.1)
-const titleWord = wordRise('110%')
 const fadeUp = riseIn(1, 0.35)
-
-/** titulo em caixa-alta com mascara por palavra, ao entrar na tela */
-function MaskTitle({ text, as = 'h2', className }: { text: string; as?: 'h2' | 'h3'; className?: string }) {
-  const Tag = as === 'h2' ? motion.h2 : motion.h3
-  return (
-    <Tag className={className} variants={titleSeq} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.6 }}>
-      {words(text).map((word, n, all) => (
-        <Fragment key={`${word}-${n}`}>
-          <span className="reveal-mask"><motion.span variants={titleWord}>{word}</motion.span></span>
-          {n < all.length - 1 ? ' ' : null}
-        </Fragment>
-      ))}
-    </Tag>
-  )
-}
 
 const byId = (id: string) => CARDS.find((c) => c.photo.id === id)!.photo
 

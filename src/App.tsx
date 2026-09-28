@@ -43,7 +43,7 @@ export default function App() {
 
       <div className={page ? 'internal-backdrop' : 'backdrop'} aria-hidden />
       <a className="skip-link" href="#conteudo">{SITE.skip}</a>
-      <Nav />
+      <Nav solid={Boolean(page)} />
       <main id="conteudo" tabIndex={-1}>
         {page ? (
           <InternalContent page={page} />
