@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import { ArrowUpRightIcon } from '@phosphor-icons/react/dist/csr/ArrowUpRight'
+import { StarIcon } from '@phosphor-icons/react/dist/csr/Star'
 import { CARDS, INSTITUTIONAL_LINKS, LEGAL_LINKS, MANIFESTO, SECTION, SITE, toHome } from '../design'
 import { DUR, EASE_MASK, riseIn } from '../lib/motion'
 import { MaskTitle, Rise } from './Reveal'
@@ -103,6 +104,42 @@ export function Place() {
           <span className="place__strip" aria-hidden="true">{SITE.place.strip}</span>
         </div>
       </div>
+    </section>
+  )
+}
+
+/* ------------------------------------------------------------------
+   Depoimentos — Figma 9111:2336. PLACEHOLDER: ver SITE.depoimentos.
+   No celular os cards viram uma fita com scroll-snap nativo.
+   ------------------------------------------------------------------ */
+export function Depoimentos() {
+  const { title, stars, items } = SITE.depoimentos
+  return (
+    <section className="depoimentos">
+      <div className="site-frame">
+        <MaskTitle text={title} className="caps depoimentos__title" />
+      </div>
+      <ul className="depoimentos__list">
+        {items.map((item, i) => (
+          <li key={i}>
+            <Rise className="depoimento" delay={i * 0.08}>
+              <figure>
+                <span className="depoimento__stars" role="img" aria-label={stars}>
+                  {Array.from({ length: 5 }, (_, n) => <StarIcon key={n} weight="fill" aria-hidden="true" />)}
+                </span>
+                <blockquote className="depoimento__quote">“{item.quote}”</blockquote>
+                <figcaption className="depoimento__author">
+                  <img {...imgProps(item.avatar, '44px')} alt="" loading="lazy" decoding="async" />
+                  <span>
+                    <strong>{item.name}</strong>
+                    <span>{item.role}</span>
+                  </span>
+                </figcaption>
+              </figure>
+            </Rise>
+          </li>
+        ))}
+      </ul>
     </section>
   )
 }

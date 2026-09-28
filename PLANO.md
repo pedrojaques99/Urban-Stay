@@ -123,7 +123,9 @@ Duas dobras novas: `9111:4` (manifesto) e `9111:2336` (depoimentos).
 - **Responsivo:** sem `--k`, porque o Figma só tem a arte desktop. Fica mobile-first em `clamp()`: a fonte do título acompanha a largura (`vw`) e as fotos têm a altura de 1 cap (`0.72em`), então a composição escala junto em qualquer tela. Abaixo de 640px os dois parágrafos viram uma coluna só, e as fotos grandes (banheira) encolhem para a mesma largura das outras, para a linha não quebrar feio.
 - **Fotos:** `memoir-terrace`, `memoir-sunset` e `memoir-paper` já estão em `public/img`. **Falta a da banheira:** exporto do Figma para `public/img/` e rodo `npm run img`.
 
-### 2. Depoimentos `9111:2336`: "Quem já dormiu aqui" — BLOQUEADO
+### 2. Depoimentos `9111:2336`: "Quem já dormiu aqui" — ENTREGUE COMO PLACEHOLDER (dono, 28/09)
+
+Construído com o texto de exemplo do Figma por decisão do dono. **Trocar `SITE.depoimentos.items` por hóspedes reais antes do lançamento.** Registro da análise original:
 
 Isto choca com uma regra fechada do projeto: **o hotel ainda não opera**, e o combinado é "sem avaliações, notas ou números sem fonte". Os cards do Figma são placeholder ("Gabriel Oliveira, CEO Startup", 5 estrelas, o mesmo texto repetido 4 vezes). Publicar isso seria depoimento inventado.
 

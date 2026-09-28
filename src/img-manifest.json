@@ -1,4 +1,11 @@
 {
+  "/img/avatar-placeholder.png": {
+    "widths": [
+      480,
+      800
+    ],
+    "ratio": 1
+  },
   "/img/bed.png": {
     "widths": [
       480,

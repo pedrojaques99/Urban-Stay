@@ -282,6 +282,22 @@ export const SITE = {
     ],
   },
 
+  /*
+   * Figma 9111:2336. PLACEHOLDER (decisão do dono, 28/09): o hotel ainda
+   * não opera, estes depoimentos não são reais. Trocar por hóspedes reais,
+   * com nome e autorização, antes de publicar.
+   */
+  depoimentos: {
+    title: 'Quem já dormiu aqui',
+    stars: '5 de 5 estrelas',
+    items: Array.from({ length: 4 }, () => ({
+      quote: 'Gostei bastante, foi tudo bem tranquilo e o resultado ficou ótimo. Recomendo!',
+      name: 'Gabriel Oliveira',
+      role: 'CEO Startup',
+      avatar: '/img/avatar-placeholder.png',
+    })),
+  },
+
   place: {
     bracket: 'Rua 902, Balneário Camboriú',
     title: 'A praia de dia. A cidade de noite.',
