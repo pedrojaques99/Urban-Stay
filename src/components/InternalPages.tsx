@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import type { CSSProperties, FormEvent } from 'react'
 import { CORPORATE, INTERNAL, INTERNAL_LAYOUT, LEGAL_LINKS, NAV_LINKS } from '../design'
 import type { CorporatePage } from './Corporate'
+import { imgProps } from '../lib/img'
 import '../internal.css'
 
 const layout = Object.fromEntries(Object.entries(INTERNAL_LAYOUT).map(([name, value]) => [`--i-${name}`, `${value}px`])) as CSSProperties
@@ -9,7 +10,7 @@ type Photo = { src: string; alt: string; caption: string }
 
 function Photograph({ photo, className = '', eager = false }: { photo: Photo; className?: string; eager?: boolean }) {
   return <figure className={`internal-photo ${className}`}>
-    <img src={photo.src} alt={photo.alt} loading={eager ? 'eager' : 'lazy'} />
+    <img {...imgProps(photo.src, '(max-width: 1023px) 100vw, 50vw')} alt={photo.alt} loading={eager ? 'eager' : 'lazy'} />
     <figcaption>{photo.caption}</figcaption>
   </figure>
 }
@@ -56,7 +57,7 @@ function Activity() {
       {content.items.map((item, index) => <details key={item.title} name="atuacao" open={index === 0} className="activity-entry">
         <summary><h2>{item.title}</h2><span className="activity-entry__tag">{item.tag}</span><span className="activity-entry__toggle" aria-hidden="true" /></summary>
         <div className="activity-entry__body">
-          <img src={item.image} alt={item.alt} loading={index === 0 ? 'eager' : 'lazy'} />
+          <img {...imgProps(item.image, '(max-width: 1023px) 100vw, 40vw')} alt={item.alt} loading={index === 0 ? 'eager' : 'lazy'} />
           <div><p className="activity-entry__lead">{item.text}</p><p>{item.detail}</p><a className="internal-link" href={item.href}>{item.link}<span aria-hidden="true">↗</span></a></div>
         </div>
       </details>)}

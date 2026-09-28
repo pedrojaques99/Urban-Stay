@@ -48,6 +48,35 @@ export function wideFrameScale(s: DesignScale) {
 }
 
 /**
+ * Mede a janela e grava as variaveis de escala no `:root`.
+ *
+ * Roda tambem no `main.tsx`, ANTES do primeiro render: se `--k` so fosse
+ * gravado no efeito do hook, a pagina pintava uma vez na escala 1 (a do
+ * `:root` do CSS) e encolhia na frente do usuario. Medido em 28/09: CLS 0,918
+ * nas paginas internas a 390px.
+ */
+export function applyDesignScale(): DesignScale {
+  const next = measure()
+  const root = document.documentElement
+  const frame = frameWidth(next)
+  const fb = benefitsFit(next)
+
+  root.style.setProperty('--k', String(next.k))
+  // escala do bloco de beneficios: k, encolhido se a janela for baixa
+  root.style.setProperty('--kb', String(next.k * fb))
+  // escala dos frames que ocupam as 1440 unidades — ver wideFrameScale
+  root.style.setProperty('--km', String(wideFrameScale(next)))
+  // meia largura do art-board visivel, em px
+  root.style.setProperty('--frame-half', `${(frame * next.k) / 2}px`)
+  // sobra lateral quando a janela passa de 1440 (alinhamento, nao recorte)
+  root.style.setProperty(
+    '--side-clip',
+    `${Math.max(0, (next.vw - frame * next.k) / 2)}px`,
+  )
+  return next
+}
+
+/**
  * Publica `--k` no `:root` e devolve as medidas. Todo o CSS multiplica os
  * valores do Figma por essa variavel, entao de 1440px para cima o render e 1:1.
  */
@@ -59,27 +88,7 @@ export function useDesignScale(): DesignScale {
   )
 
   useEffect(() => {
-    const apply = () => {
-      const next = measure()
-      setScale(next)
-
-      const root = document.documentElement
-      const frame = frameWidth(next)
-      const fb = benefitsFit(next)
-
-      root.style.setProperty('--k', String(next.k))
-      // escala do bloco de beneficios: k, encolhido se a janela for baixa
-      root.style.setProperty('--kb', String(next.k * fb))
-      // escala dos frames que ocupam as 1440 unidades — ver wideFrameScale
-      root.style.setProperty('--km', String(wideFrameScale(next)))
-      // meia largura do art-board visivel, em px
-      root.style.setProperty('--frame-half', `${(frame * next.k) / 2}px`)
-      // sobra lateral quando a janela passa de 1440 (alinhamento, nao recorte)
-      root.style.setProperty(
-        '--side-clip',
-        `${Math.max(0, (next.vw - frame * next.k) / 2)}px`,
-      )
-    }
+    const apply = () => setScale(applyDesignScale())
 
     apply()
     window.addEventListener('resize', apply)

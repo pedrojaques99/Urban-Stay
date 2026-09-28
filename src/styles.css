@@ -1,4 +1,25 @@
 /* ------------------------------------------------------------------
+   Clash Grotesk (ITF Free Font License) servida pelo proprio site.
+   O CSS do Fontshare bloqueava a renderizacao por ~0,9s no 4G (medido
+   28/09). Sem 600: a marca nao usa Bold, o peso de titulo e o 500.
+   ------------------------------------------------------------------ */
+@font-face {
+  font-family: "Clash Grotesk";
+  src: url("/fonts/clash-grotesk-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Clash Grotesk";
+  src: url("/fonts/clash-grotesk-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ------------------------------------------------------------------
    Urban Stay® — design tokens straight from the Figma library
    ------------------------------------------------------------------ */
 :root {

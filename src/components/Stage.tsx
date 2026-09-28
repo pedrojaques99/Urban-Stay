@@ -26,6 +26,7 @@ import {
   smoothstep,
 } from '../lib/math'
 import { ENTER_DELAY, riseIn, sequence, wordRise, words } from '../lib/motion'
+import { imgProps } from '../lib/img'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -339,7 +340,8 @@ export function Stage() {
           >
             <img
               className="card__img"
-              src={slot.card.photo.src}
+              // o card chega a ~555px no desktop (344.524 x 1.61) e a ~60vw no celular
+              {...imgProps(slot.card.photo.src, '(max-width: 1023px) 60vw, 36vw')}
               alt={j < CARDS.length ? slot.card.photo.alt : ''}
               aria-hidden={j >= CARDS.length}
               style={{ objectPosition: slot.card.photo.fit }}

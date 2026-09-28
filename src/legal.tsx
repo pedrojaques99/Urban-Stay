@@ -1,9 +1,11 @@
 import { createRoot } from 'react-dom/client'
 import { LEGAL_LINKS } from './design'
 import { LEGAL_PAGES } from './legalContent'
-import { useDesignScale } from './hooks/useDesignScale'
+import { applyDesignScale, useDesignScale } from './hooks/useDesignScale'
 import './styles.css'
 import './legal.css'
+
+applyDesignScale()
 
 function LegalPage() {
   useDesignScale()

@@ -156,22 +156,24 @@ type LoaderProps = {
  * Cobre a pagina com o mesmo gradiente do `.backdrop`, entao a saida nao e
  * uma cortina abrindo: e a marca sumindo sobre o fundo que ja estava la.
  *
- * O fim depende de tres coisas: a fonte assentada (`document.fonts.ready` —
- * sem isso o titulo do hero troca de metrica na frente do usuario), o
- * `load` da janela e o tempo minimo.
+ * O fim depende de duas coisas: a fonte assentada (`document.fonts.ready`,
+ * sem isso o titulo do hero troca de metrica na frente do usuario) e o tempo
+ * minimo. NAO espera o `load` da janela: isso amarrava a saida a maior foto
+ * da pagina, e o titulo do hero (o LCP) so pintava depois dela. Medido em
+ * 28/09: LCP de 23,9s no 4G. As fotos que faltam chegam com a pagina ja a
+ * vista; `MAX_WAIT` segura o caso de fonte que nunca responde.
  */
+/** teto de espera pela fonte, em ms: depois disso a pagina aparece de qualquer jeito */
+const MAX_WAIT = 2500
+
 export function Loader({ variant = 'pulso', minDuration = 1400, onDone }: LoaderProps) {
   useEffect(() => {
     let alive = true
     const started = performance.now()
 
-    const settled = Promise.all([
+    const settled = Promise.race([
       document.fonts ? document.fonts.ready : Promise.resolve(),
-      document.readyState === 'complete'
-        ? Promise.resolve()
-        : new Promise<void>((resolve) => {
-            window.addEventListener('load', () => resolve(), { once: true })
-          }),
+      new Promise((resolve) => window.setTimeout(resolve, MAX_WAIT)),
     ])
 
     let timer = 0
