@@ -75,8 +75,8 @@ export function FooterMark({ label }: { label: string }) {
       const right = Math.max(...boxes.map((b) => b.x + b.width))
       return (left + right) / 2 / 202.251
     })
-    const lift = groups.map((g) => gsap.quickTo(g, 'y', { duration: 0.6, ease: 'power3.out' }))
-    const turn = gsap.quickTo(symbol, 'rotation', { duration: 0.9, ease: 'power3.out' })
+    const lift = groups.map((g) => gsap.quickTo(g, 'y', { duration: DUR.follow, ease: 'power3.out' }))
+    const turn = gsap.quickTo(symbol, 'rotation', { duration: DUR.follow * 1.5, ease: 'power3.out' })
 
     const move = (e: PointerEvent) => {
       if (intro.progress() < 1) return

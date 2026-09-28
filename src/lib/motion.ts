@@ -33,6 +33,8 @@ export const DUR = {
   reveal: 1.1,
   /** o anel de fotos nascendo na abertura mobile */
   intro: 1.6,
+  /** algo que segue o ponteiro e assenta (marca do rodape) */
+  follow: 0.6,
 } as const
 
 /** Respiro antes da primeira aparicao, para as fontes ja terem assentado. */
