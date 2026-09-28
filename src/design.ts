@@ -246,12 +246,7 @@ export const SECTION = {
   lista: 'lista',
 } as const
 
-/** ancoras da home; fora dela, `toHome()` prefixa `/` para voltar e rolar */
-export const NAV_LINKS = [
-  { label: 'Nossa moldura', href: `#${SECTION.casa}` },
-  { label: 'Localização', href: `#${SECTION.rua}` },
-] as const
-
+/** a lista mora na home: fora dela, `toHome` prefixa `/` para voltar e rolar */
 export const toHome = (hash: string) => (window.location.pathname === '/' ? hash : `/${hash}`)
 
 export const SITE = {
@@ -295,7 +290,7 @@ export const SITE = {
     /** endosso da marca-mae (Estrategia.pdf). Confirmar com o cliente. */
     endorsement: 'Um projeto D’Sintra.',
     navLabel: 'Navegação do rodapé',
-    instLabel: 'Institucional',
+    home: 'Início',
     legalLabel: 'Informações legais',
   },
 } as const
@@ -450,8 +445,8 @@ export const INTERNAL = {
     privacyLink: 'Privacidade',
   },
   footer: {
-    nextLabel: 'Continue', linksLabel: 'Navegação', legalLabel: 'Informações legais',
-    signature: 'Hospitalidade em Balneário Camboriú.',
-    next: { empresa: { label: 'Nossa atuação', href: '/atuacao.html' }, atuacao: { label: 'Contato', href: '/contato.html' }, destino: { label: 'A Urban Stay', href: '/empresa.html' }, contato: { label: 'A Urban Stay', href: '/empresa.html' } },
+    nextLabel: 'Próxima página',
+    /** a sequencia percorre as quatro, com os mesmos nomes do menu */
+    next: { empresa: 'atuacao', atuacao: 'destino', destino: 'contato', contato: 'empresa' },
   },
 } as const

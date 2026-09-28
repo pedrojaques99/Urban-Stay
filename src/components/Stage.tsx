@@ -353,16 +353,6 @@ export function Stage() {
 
   return (
     <div className="stage-track" ref={trackRef} style={{ height: `${TRACK_VH}svh` }}>
-      {/* A ancora de "Nossa moldura" fica na TRILHA, no ponto de scroll em
-          que a esteira comeca. O texto dos beneficios vive dentro do palco
-          fixado: ancorar nele levava o link para o nascimento da roda (do
-          topo) ou para um ponto qualquer (do meio). (medido 28/09) */}
-      <span
-        id={SECTION.casa}
-        className="stage-anchor"
-        style={{ top: `${CAROUSEL_START * PIN_VH}svh` }}
-        aria-hidden="true"
-      />
       <div className="stage">
         {STRIP.map((slot, j) => (
           <div

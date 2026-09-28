@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import type { CSSProperties, FormEvent } from 'react'
-import { CORPORATE, INSTITUTIONAL_LINKS, INTERNAL, INTERNAL_LAYOUT, LEGAL_LINKS } from '../design'
+import { CORPORATE, INTERNAL, INTERNAL_LAYOUT } from '../design'
 import type { CorporatePage } from './Corporate'
 import { imgProps } from '../lib/img'
 import '../internal.css'
@@ -131,13 +131,25 @@ export function InternalContent({ page }: { page: CorporatePage }) {
   </div>
 }
 
-export function InternalFooter({ page }: { page: CorporatePage }) {
-  const next = INTERNAL.footer.next[page]
-  return <footer className="internal-footer" style={layout}>
+/**
+ * Fim de cada pagina institucional: a proxima da sequencia, com hierarquia
+ * clara (rotulo pequeno colado ao nome, nome em destaque, uma linha do que
+ * tem la, seta alinhada ao nome). O rodape em si e o mesmo da home
+ * (`Footer`), para o site inteiro ter um rodape so. (28/09)
+ */
+export function NextPage({ page }: { page: CorporatePage }) {
+  const key = INTERNAL.footer.next[page]
+  const next = CORPORATE.pages[key]
+  return <nav className="next-page" style={layout} aria-label={INTERNAL.footer.nextLabel}>
     <div className="internal-frame">
-      <a className="internal-next" href={next.href}><span className="internal-eyebrow">{INTERNAL.footer.nextLabel}</span><span>{next.label}</span><span aria-hidden="true"><ArrowUpRightIcon /></span></a>
-      <div className="internal-footer__body"><div><a href="/" aria-label="Urban Stay, voltar ao início"><img src="/img/logo.svg" alt="Urban Stay" /></a><p>{INTERNAL.footer.signature}</p></div><nav aria-label={INTERNAL.footer.linksLabel}>{INSTITUTIONAL_LINKS.map(link => <a href={link.href} key={link.href}>{link.label}</a>)}</nav></div>
-      <div className="internal-footer__bottom"><span>© {new Date().getFullYear()} Urban Stay®</span><nav aria-label={INTERNAL.footer.legalLabel}>{LEGAL_LINKS.map(link => <a href={link.href} key={link.href}>{link.label}</a>)}</nav></div>
+      <a className="next-page__link" href={`/${key}.html`}>
+        <span className="next-page__text">
+          <span className="next-page__label">{INTERNAL.footer.nextLabel}</span>
+          <span className="next-page__title">{next.label}</span>
+          <span className="next-page__desc">{next.description}</span>
+        </span>
+        <span className="next-page__icon" aria-hidden="true"><ArrowUpRightIcon /></span>
+      </a>
     </div>
-  </footer>
+  </nav>
 }

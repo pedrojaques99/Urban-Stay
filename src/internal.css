@@ -108,18 +108,6 @@
 .contact-result .internal-link { font-size: 1rem; }
 
 /* Rodapé estático, sem máscaras, gradiente, revelação ou animação. */
-.internal-footer { background: var(--areia-clara); padding-top: calc(var(--i-subtitle) * var(--k)); }
-.internal-next { display: grid; grid-template-columns: 2fr 9fr 1fr; align-items: center; gap: calc(var(--i-gutter) * var(--k)); border-top: 1px solid currentColor; border-bottom: 1px solid currentColor; padding-block: calc(var(--i-heading) * var(--k)); }
-.internal-next > span:nth-child(2) { font-size: calc(var(--i-subtitle) * var(--k)); line-height: 1.1; letter-spacing: -.045em; }
-.internal-next > span:last-child { justify-self: end; font-size: calc(var(--i-subtitle) * var(--k)); }
-.internal-next:hover > span:nth-child(2) { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .15em; }
-.internal-footer__body { display: flex; justify-content: space-between; gap: calc(var(--i-gutter) * var(--k)); padding-block: calc(var(--i-subtitle) * var(--k)); }
-.internal-footer__body img { width: calc(var(--i-logo) * var(--k)); height: auto; }
-.internal-footer__body p { font-size: .85rem; margin: 1.5em 0 0; }
-.internal-footer__body nav { display: grid; grid-template-columns: 1fr 1fr; column-gap: calc(var(--i-space) * var(--k)); row-gap: 1em; font-size: .95rem; align-content: start; }
-.internal-footer__bottom { display: flex; justify-content: space-between; gap: 1.5em; border-top: 1px solid #02060830; padding-block: calc(var(--i-small) * var(--k)); font-size: .75rem; }
-.internal-footer__bottom nav { display: flex; flex-wrap: wrap; gap: 2em; }
-.internal-footer nav a:hover { text-decoration: underline; text-underline-offset: .25em; }
 
 @media (max-width: 1023px) {
   .internal-backdrop ~ .nav .nav__logo { min-width: 8rem; height: auto; }
@@ -174,13 +162,76 @@
   .contact-form__submit { flex-direction: column; align-items: stretch; gap: 1.25rem; }
   .contact-form__submit > p { max-width: none; }
   .contact-form__submit > button { justify-content: space-between; }
-  .internal-next { grid-template-columns: 1fr auto; padding-block: 1.5rem; gap: 1rem; }
-  .internal-next > .internal-eyebrow { grid-column: 1 / -1; }
-  .internal-next > span:nth-child(2), .internal-next > span:last-child { font-size: max(1.7rem, calc(var(--i-subtitle) * var(--k))); }
-  .internal-footer__body { flex-direction: column; gap: 2rem; padding-block: 2rem; }
-  .internal-footer__body img { width: max(9rem, calc(var(--i-logo) * var(--k))); }
-  .internal-footer__body nav { grid-template-columns: 1fr 1fr; column-gap: 1rem; }
-  .internal-footer__bottom { flex-direction: column; padding-block: 1.5rem; }
-  .internal-footer__bottom nav { gap: 1.25em; }
 }
 @media (prefers-reduced-motion: reduce) { .internal-link span { transition: none; } }
+
+/* ------------------------------------------------------------------
+   Proxima pagina (28/09). Hierarquia em tres niveis, colados:
+   rotulo pequeno > nome da pagina em destaque > uma linha do que tem la.
+   A seta acompanha o nome, nao a borda da tela. O antigo "Continue",
+   a 250px do nome e no menor corpo da pagina, lia como solto.
+   ------------------------------------------------------------------ */
+.next-page {
+  position: relative;
+  z-index: 2;
+  background: var(--areia-clara);
+  color: var(--noite-urbana);
+  padding-block: clamp(3rem, 8vw, 6rem);
+}
+
+.next-page__link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  padding-block: clamp(1.5rem, 3vw, 2.5rem);
+  border-top: 1px solid var(--noite-urbana);
+  border-bottom: 1px solid color-mix(in srgb, var(--noite-urbana) 20%, transparent);
+}
+
+.next-page__text {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.next-page__label {
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+.next-page__title {
+  font-weight: 500;
+  font-size: clamp(2.25rem, 6vw, 4.5rem);
+  line-height: 0.97;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+.next-page__desc {
+  max-width: 44ch;
+  font-size: 1rem;
+  line-height: 1.4;
+  opacity: 0.75;
+}
+
+.next-page__icon {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  transition: transform 0.25s var(--ease-out);
+}
+
+.next-page__link:hover .next-page__icon {
+  transform: translate(0.08em, -0.08em);
+}
+
+.next-page__link:hover .next-page__title {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.12em;
+}
+
+.next-page__link:focus-visible {
+  outline: 2px solid var(--noite-urbana);
+  outline-offset: 6px;
+}

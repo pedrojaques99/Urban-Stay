@@ -6,7 +6,7 @@ import { Stage } from './components/Stage'
 import { MobileStage } from './components/MobileStage'
 import { Story } from './components/Story'
 import { Footer, Place, Waitlist } from './components/Sections'
-import { InternalContent, InternalFooter } from './components/InternalPages'
+import { InternalContent, NextPage } from './components/InternalPages'
 import type { CorporatePage } from './components/Corporate'
 import { CORPORATE, SITE } from './design'
 import { useSmoothScroll } from './hooks/useSmoothScroll'
@@ -55,7 +55,8 @@ export default function App() {
           </>
         )}
       </main>
-      {page ? <InternalFooter page={page} /> : <Footer />}
+      {page && <NextPage page={page} />}
+      <Footer />
     </MotionConfig>
   )
 }

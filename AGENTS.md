@@ -23,8 +23,8 @@ The home is now **one page that sells the stay**. The venue does not operate yet
 
 - **< 1024px** renders `MobileStage` (one screen of pinned show: 6 photos born in a ring that closes into the **trio of Moldura Urbana**) + `Story` (the 6 benefits in native scroll, sticky `01 / 06` counter). The 820svh `Stage` is desktop only and unchanged except its CTA.
 - After the show, both widths render `Sections.tsx`: `Place` (Rua 902, Maré Funda), `Waitlist`, `Footer`.
-- The institutional pages (empresa/atuação/destino/contato) are **kept as they were** and linked from the footer. The client decides which stay. Do not delete them without that decision.
-- Copy lives in `design.ts` (`SITE`, `SECTION`, `NAV_LINKS`), never in components: an EN-US version comes later.
+- The institutional pages (empresa/atuação/destino/contato) are **kept** and are the nav links: **links go to their own routes, never to anchors** (owner's call, 28/09). The only anchor is the waitlist CTA (`toHome('#lista')`), because the list lives on the home. On mobile the links live in a `<dialog>` menu (`.menu`); the CTA stays visible. Every page ends with the same `Footer`; institutional pages add `NextPage` before it (empresa → atuação → destino → contato → empresa). The client decides which pages stay; do not delete them without that decision.
+- Copy lives in `design.ts` (`SITE`, `SECTION`, `INSTITUTIONAL_LINKS`), never in components: an EN-US version comes later.
 - New sections have no Figma node: they are **mobile-first in rem/clamp** (`site.css`), not `figma * --k`. The `--k` rule still binds everything that came from the art-board.
 - Palette: only the vault's six (Areia, Céu Aberto, Maré Funda, Pôr do Sol, Brasa, Noite Urbana). Brasa is for buttons only; button background is `--brasa-acao` (`#CD3A00`) because Areia on the vault's `#CE3A00` is 4.499:1 and fails AA.
 - Waitlist destination: `VITE_WAITLIST_ENDPOINT` (POST JSON). Unset = prototype: the form validates and says nothing was sent. Never fake a success.
@@ -98,7 +98,7 @@ Progress windows (they overlap on purpose so no card ever rests between phases):
 | `0.38 → 0.46` | first benefit copy rises through a mask |
 | `0.44 → 1.00` | strip walks card to card |
 
-These windows are the ORIGINAL fractions of the 720vh **pin distance** (track − 100svh; ScrollTrigger progress runs on it). `Stage.tsx` rescales them with `at()` so the wheel keeps its absolute length and only the strip shrinks. The strip stops at `STRIP_STOPS` in `design.ts` (max 3, card indices): the tape walks through the cards in between but copy exists only for the stops. The "Nossa moldura" anchor is a `.stage-anchor` in the TRACK at the strip start, never an element inside the sticky stage (that landed in the wheel).
+These windows are the ORIGINAL fractions of the 720vh **pin distance** (track − 100svh; ScrollTrigger progress runs on it). `Stage.tsx` rescales them with `at()` so the wheel keeps its absolute length and only the strip shrinks. The strip stops at `STRIP_STOPS` in `design.ts` (max 3, card indices): the tape walks through the cards in between but copy exists only for the stops.
 
 If you change a window, re-check the overlaps. A gap between wheel and strip is a regression.
 

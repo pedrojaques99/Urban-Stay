@@ -2,7 +2,7 @@ import { Fragment, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import { ArrowUpRightIcon } from '@phosphor-icons/react/dist/csr/ArrowUpRight'
-import { CARDS, INSTITUTIONAL_LINKS, LEGAL_LINKS, NAV_LINKS, SECTION, SITE } from '../design'
+import { CARDS, INSTITUTIONAL_LINKS, LEGAL_LINKS, SECTION, SITE, toHome } from '../design'
 import { DUR, EASE_MASK, riseIn, sequence, wordRise, words } from '../lib/motion'
 import { imgProps } from '../lib/img'
 
@@ -186,15 +186,13 @@ export function Footer() {
           <p className="site-footer__endorse">{SITE.footer.endorsement}</p>
         </div>
         <nav className="site-footer__nav" aria-label={SITE.footer.navLabel}>
-          {NAV_LINKS.map((link) => <a key={link.href} href={link.href}>{link.label}</a>)}
-          <a href={`#${SECTION.lista}`}>
-            {SITE.ctaShort}
-            <span aria-hidden="true"><ArrowUpRightIcon /></span>
-          </a>
-        </nav>
-        <nav className="site-footer__nav site-footer__nav--inst" aria-label={SITE.footer.instLabel}>
+          <a href="/">{SITE.footer.home}</a>
           {INSTITUTIONAL_LINKS.map((link) => <a key={link.href} href={link.href}>{link.label}</a>)}
         </nav>
+        <a className="btn btn--brasa btn--lg site-footer__cta" href={toHome(`#${SECTION.lista}`)}>
+          {SITE.cta}
+          <ArrowUpRightIcon aria-hidden="true" />
+        </a>
         <img className="site-footer__mark" src="/img/logo-areia.svg" alt="Urban Stay" width={202} height={20} loading="lazy" />
         <div className="site-footer__bottom">
           <span>© {new Date().getFullYear()} Urban Stay®</span>

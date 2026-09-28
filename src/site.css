@@ -113,6 +113,89 @@
 }
 
 /* ------------------------------------------------------------------
+   Nav: links encostam no botao da lista; o botao do menu so no celular.
+   Cada camada guarda o lugar da peca da outra (`.nav__ghost`).
+   ------------------------------------------------------------------ */
+.nav__links {
+  margin-left: auto;
+}
+
+.nav__right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-toggle {
+  display: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  font-size: 1.5rem;
+}
+
+.nav-cta .nav__ghost {
+  visibility: hidden;
+}
+
+/* menu do celular: <dialog> em tela cheia, Esc e foco nativos */
+.menu {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  padding: 1rem var(--gutter) calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  background: var(--areia-clara);
+  color: var(--noite-urbana);
+}
+
+.menu[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.menu::backdrop {
+  background: var(--noite-urbana);
+}
+
+.menu__close {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  align-self: flex-end;
+  min-height: 2.75rem;
+  font-size: 1rem;
+}
+
+.menu__links {
+  display: grid;
+  gap: 0.25rem;
+  margin-top: 2.5rem;
+}
+
+.menu__links a {
+  padding-block: 0.35rem;
+  font-weight: 500;
+  font-size: clamp(2.25rem, 11vw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+.menu__links a[aria-current="page"] {
+  opacity: 0.45;
+}
+
+.menu__cta {
+  margin-top: auto;
+  width: 100%;
+}
+
+/* ------------------------------------------------------------------
    Celular: nav e abertura (MobileStage)
    ------------------------------------------------------------------ */
 @media (max-width: 1023px) {
@@ -128,7 +211,18 @@
     height: auto;
   }
 
-  .nav-cta .btn {
+  .nav-toggle {
+    display: inline-grid;
+  }
+
+  .nav__right,
+  .nav-cta {
+    gap: 0.25rem;
+  }
+
+  /* o botao real e o fantasma dele na camada mesclada: mesmo tamanho */
+  .nav-cta .btn,
+  .nav .btn {
     padding: 0.6rem 0.85rem;
     border-radius: 4px;
     font-size: 0.875rem;
@@ -522,8 +616,9 @@
   text-underline-offset: 0.3em;
 }
 
-.site-footer__grid > .site-footer__nav--inst {
-  opacity: 0.7;
+.site-footer__cta {
+  justify-self: start;
+  gap: 0.75rem;
 }
 
 .site-footer__mark {
@@ -571,8 +666,8 @@
   .lista__copy { grid-column: 8 / -1; }
 
   .site-footer__about { grid-column: 1 / 6; }
-  .site-footer__nav { grid-column: 8 / 10; }
-  .site-footer__nav--inst { grid-column: 10 / -1; }
+  .site-footer__nav { grid-column: 7 / 9; }
+  .site-footer__cta { grid-column: 9 / -1; justify-self: end; align-self: start; }
   .site-footer__mark,
   .site-footer__bottom { grid-column: 1 / -1; }
   .site-footer__mark { margin-top: 3rem; }
