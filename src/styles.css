@@ -101,7 +101,7 @@ a {
   inset: 0;
   z-index: 0;
   background-color: var(--areia-clara);
-  background-image: url("/img/bg-gradient.png");
+  background-image: url("/img/opt/bg-gradient.webp");
   background-size: 100% 100%;
   background-repeat: no-repeat;
   pointer-events: none;
@@ -514,7 +514,7 @@ a {
   /* o mesmo fundo do .backdrop: a saida e a marca sumindo sobre o
      gradiente que ja estava la, nao uma cortina abrindo */
   background-color: var(--areia-clara);
-  background-image: url("/img/bg-gradient.png");
+  background-image: url("/img/opt/bg-gradient.webp");
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }

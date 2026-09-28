@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react'
 import { useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { EASE_MASK } from '../lib/motion'
+import { DUR, EASE_MASK } from '../lib/motion'
 
 /**
  * Loading — o simbolo Urban Stay em movimento.
@@ -106,7 +106,7 @@ type LoaderProps = {
 /** teto de espera pela fonte, em ms: depois disso a pagina aparece de qualquer jeito */
 const MAX_WAIT = 2500
 
-export function Loader({ minDuration = 1400, onDone }: LoaderProps) {
+export function Loader({ minDuration = 800, onDone }: LoaderProps) {
   useEffect(() => {
     let alive = true
     const started = performance.now()
@@ -142,7 +142,7 @@ export function Loader({ minDuration = 1400, onDone }: LoaderProps) {
       className="loader"
       // sai subindo de leve enquanto some: o mesmo gesto das mascaras
       exit={{ opacity: 0, y: -24 }}
-      transition={{ duration: 0.9, ease: EASE_MASK }}
+      transition={{ duration: DUR.exit, ease: EASE_MASK }}
       // o Lenis ignora a roda enquanto o ponteiro estiver sobre a camada
       data-lenis-prevent
       role="status"

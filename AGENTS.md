@@ -13,7 +13,32 @@ npm install
 npm run dev      # http://localhost:5173
 npm run build    # tsc -b && vite build
 npm run preview
+npm run img      # regenerate public/img/opt/*.webp + src/img-manifest.json after adding/replacing a photo
+node scripts/css-orfao.mjs [--fix]   # list (or remove) CSS rules whose classes no .tsx/.html uses
 ```
+
+## Upgrade 28/09/2026 (branch `upgrade/mobile-first`) — read PLANO.md and AUDIT.md
+
+The home is now **one page that sells the stay**. The venue does not operate yet, so the single action is the **waitlist** (`#lista`, "Lista de abertura"). No reviews, ratings or numbers without a source.
+
+- **< 1024px** renders `MobileStage` (one screen of pinned show: 6 photos born in a ring that closes into the **trio of Moldura Urbana**) + `Story` (the 6 benefits in native scroll, sticky `01 / 06` counter). The 820svh `Stage` is desktop only and unchanged except its CTA.
+- After the show, both widths render `Sections.tsx`: `Place` (Rua 902, Maré Funda), `Waitlist`, `Footer`.
+- The institutional pages (empresa/atuação/destino/contato) are **kept as they were** and linked from the footer. The client decides which stay. Do not delete them without that decision.
+- Copy lives in `design.ts` (`SITE`, `SECTION`, `NAV_LINKS`), never in components: an EN-US version comes later.
+- New sections have no Figma node: they are **mobile-first in rem/clamp** (`site.css`), not `figma * --k`. The `--k` rule still binds everything that came from the art-board.
+- Palette: only the vault's six (Areia, Céu Aberto, Maré Funda, Pôr do Sol, Brasa, Noite Urbana). Brasa is for buttons only; button background is `--brasa-acao` (`#CD3A00`) because Areia on the vault's `#CE3A00` is 4.499:1 and fails AA.
+- Waitlist destination: `VITE_WAITLIST_ENDPOINT` (POST JSON). Unset = prototype: the form validates and says nothing was sent. Never fake a success.
+- Photos: `imgProps(src, sizes, boxRatio)` from `lib/img.ts`. Pass the box ratio when the photo is cropped with `object-fit: cover`, or the browser downloads a size too small (landscape `window.png` in a 4:5 box was blurry).
+- Icons: `@phosphor-icons/react`, imported per file (`@phosphor-icons/react/dist/csr/ArrowUpRight`). Never an arrow character or a hand-drawn SVG.
+- Motion durations for reveals live in `DUR` (`lib/motion.ts`). `node ~/.claude/skills/visant-motion/scripts/motion-lint.mjs src` must stay clean.
+
+### Scars (do not reintroduce)
+
+- `applyDesignScale()` runs in `main.tsx` **before** the first render. Writing `--k` only in the hook's effect painted the page at scale 1 first: CLS 0.918.
+- The loader waits for **fonts only** (cap 2.5s), never `window.load`: that tied the LCP to the heaviest photo (23.9s on 4G).
+- The loader's full-screen background is the home's LCP. It is served as **lossless** WebP (`opt/bg-gradient.webp`, pixel-identical, 66KB) with `preload`. Lossy WebP destroys the grain.
+- `.story__list` has no `gap`; spacing is padding inside each item. With a gap, the mid-screen line fell between items and the counter froze.
+- Phosphor icons sit above the text baseline unless their wrapper is flex (`span:has(> svg:only-child)` in styles.css).
 
 No test or lint scripts. TypeScript is strict (`noUnusedLocals`, `noUnusedParameters`, `verbatimModuleSyntax`). `npm run build` is the typecheck.
 
@@ -32,7 +57,7 @@ src/
     useDesignScale.ts     # publishes --k, --kb, --frame-half, --side-clip
     useSmoothScroll.ts    # Lenis driven by the GSAP ticker
   lib/math.ts             # lerp, range, ease, smoothstep, settle
-public/img/               # Figma exports (do not recompress or rename)
+public/img/               # Figma exports (do not recompress or rename; screen versions are generated into public/img/opt by `npm run img`)
 ```
 
 There is no router, no state library, no component library. Do not add any of those unless asked.
@@ -106,7 +131,7 @@ No background, no padding of its own: 32 from the top, 32 from the sides.
 Two fixed layers on the same grid, because `mix-blend-mode: difference` only composites against the page backdrop if it sits on a top-level element. Any new stacking context (filter, opacity < 1, transform on a wrapper, `isolation`, `will-change` on an ancestor) kills the blend.
 
 - `.nav` — logo + links, white type, `mix-blend-mode: difference`
-- `.nav-cta` — the black “Reservar” pill, **outside** the blend (difference would invert it into two unreadable colors)
+- `.nav-cta` — the Brasa “Lista de abertura” pill, **outside** the blend (difference would invert it into two unreadable colors)
 - `.nav__ghost` — invisible twin of the pill, keeps the links where they sit in Figma
 
 Do not wrap `.nav` in a new parent. Do not put `mix-blend-mode` on `.nav-cta`.
@@ -115,14 +140,14 @@ Do not wrap `.nav` in a new parent. Do not put `mix-blend-mode` on `.nav-cta`.
 
 - **gsap + ScrollTrigger** — scroll progress only. Transforms are written in the `draw` loop.
 - **lenis** — inertia, ticked by `gsap.ticker` so Lenis and ScrollTrigger share the frame. `lagSmoothing(0)`.
-- Font: Clash Grotesk (Fontshare), weights 400/500/600.
+- Font: Clash Grotesk (ITF Free Font License), self-hosted in public/fonts, weights 400/500 (the brand never uses Bold).
 - `prefers-reduced-motion: reduce` skips Lenis. Do not add a reduced-motion path that still drives Lenis.
 
 After font load, call `ScrollTrigger.refresh()` (already done in `Stage`). If you change type sizes or the track height, trigger a refresh.
 
 ## Assets
 
-`public/img/` — exported from Figma. `bg-gradient.png` is the shared fill of the three frames, painted as one `position: fixed` `.backdrop`. Do not replace with a CSS gradient; the grain and stops are in the PNG.
+`public/img/` — exported from Figma. `bg-gradient.png` is the shared fill of the three frames, painted as one `position: fixed` `.backdrop`. Do not replace with a CSS gradient; the grain and stops are in the PNG. The site serves its lossless WebP copy (`opt/bg-gradient.webp`); regenerate with `npm run img`.
 
 ## Do not
 

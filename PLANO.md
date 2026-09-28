@@ -1,6 +1,6 @@
 # Urban Stay — plano de upgrade (fork)
 
-Status: **conceituação** · 28/09/2026 · auditoria em [AUDIT.md](AUDIT.md) (42/100)
+Status: **fases 1–6 feitas; 7 (entrega) em andamento** · 28/09/2026 · auditoria em [AUDIT.md](AUDIT.md) (42/100)
 
 ## Pré-voo — 28/09/2026
 
@@ -82,6 +82,8 @@ lista de abertura com nome + WhatsApp e destino de teste.
 ## Execução
 
 Branch `upgrade/mobile-first` no fork. Cada fase fecha com build verde e fotos em 390/1440.
+
+**Mudança de rota (28/09, pedido do dono):** as páginas institucionais **não** foram apagadas. Ficam como vieram, ligadas pelo rodapé, e o cliente escolhe quais seguem.
 Desktop ≥ 1024 **não muda de desenho** nas fases 1–3: só fica mais leve e estável.
 
 | Fase | O quê | Pronto quando |

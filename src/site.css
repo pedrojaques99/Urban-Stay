@@ -1,0 +1,585 @@
+/* ------------------------------------------------------------------
+   Site que vende (PLANO.md, 28/09/2026)
+
+   O que veio do art-board do Figma (hero, roda, esteira) continua em
+   styles.css, em `figma * var(--k)`. O que esta aqui nao tem node no Figma:
+   e mobile-first, em rem/clamp, e o desktop entra por `min-width: 1024px`.
+   Piso de legibilidade: nada abaixo de 0.75rem, corpo a partir de 1rem.
+
+   Cores: so a paleta de seis do vault (Areia, Ceu, Mare, Por do Sol,
+   Brasa, Noite). Brasa e a cor de acao e so aparece em botao.
+   ------------------------------------------------------------------ */
+:root {
+  --ceu-aberto: #bfd9e3;
+  --mare-funda: #1a3e56;
+  --por-do-sol: #df5b09;
+  --brasa: #ce3a00;
+  /* Brasa de fundo de botao: #CD3A00, 1 ponto de vermelho abaixo do vault.
+     Areia sobre #CE3A00 da 4.499:1 e reprova AA (texto < 18.66px) por tres
+     milesimos; #CD3A00 da 4.53:1 e e indistinguivel a olho. O vault promete
+     AA em todo par texto/fundo: levar ao cliente para corrigir la. (28/09) */
+  --brasa-acao: #cd3a00;
+
+  --gutter: clamp(1rem, 2.222vw, 2rem); /* 32 em 1440, 16 no celular */
+}
+
+.site-frame {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.caps {
+  margin: 0;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;   /* vault: tracking -4% */
+  line-height: 0.97;         /* vault: leading fechado */
+  text-wrap: balance;
+}
+
+/* colchetes da marca: `‹ RUA 902, BALNEARIO CAMBORIU ›` */
+.bracket {
+  margin: 0;
+  display: inline-flex;
+  gap: 0.75em;
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.bracket::before { content: "‹"; }
+.bracket::after { content: "›"; }
+
+/* palavra de titulo que sobe por mascara. Mesmo recorte da .reveal-line:
+   clip-path e nao overflow, para a baseline nao se mover (styles.css). */
+.reveal-mask {
+  display: inline-block;
+  clip-path: inset(0 -100% 0 -100%);
+  padding: 0.12em 0;
+  margin: -0.12em 0;
+  vertical-align: bottom;
+}
+
+.reveal-mask > span {
+  display: inline-block;
+}
+
+.skip-link {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  padding: 1rem;
+  background: var(--noite-urbana);
+  color: var(--areia-clara);
+  transform: translateY(-120%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+/* ------------------------------------------------------------------
+   Botao de acao — Brasa. Hover vai para Noite Urbana (dentro da paleta,
+   e mantem o texto Areia acima de AA). Areia sobre Brasa: 5.2:1.
+   ------------------------------------------------------------------ */
+.btn--brasa {
+  background: var(--brasa-acao);
+  color: var(--areia-clara);
+}
+
+.btn--brasa:hover {
+  background: var(--noite-urbana);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--mare-funda);
+  outline-offset: 3px;
+}
+
+.btn--lg {
+  min-height: 3.25rem;
+  padding: 0.95rem 1.4rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* ------------------------------------------------------------------
+   Celular: nav e abertura (MobileStage)
+   ------------------------------------------------------------------ */
+@media (max-width: 1023px) {
+  .nav,
+  .nav-cta {
+    top: 1rem;
+    width: calc(100% - 2 * var(--gutter));
+    max-width: none;
+  }
+
+  .nav__logo {
+    width: 8rem;
+    height: auto;
+  }
+
+  .nav-cta .btn {
+    padding: 0.6rem 0.85rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    letter-spacing: 0.01em;
+  }
+}
+
+.m-track {
+  position: relative;
+  z-index: 2;
+}
+
+.m-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.m-ring {
+  position: absolute;
+  inset: 0;
+}
+
+.m-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;   /* centra; o `transform` do draw vem depois */
+  overflow: hidden;
+  opacity: 0;
+  will-change: transform, opacity, clip-path;
+  backface-visibility: hidden;
+}
+
+.m-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.m-hero {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  z-index: 5;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.m-hero__title {
+  margin: 0;
+  font-weight: 500;
+  font-size: clamp(2.5rem, 11.5vw, 4.25rem);
+  line-height: 0.97;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+.m-hero__title .reveal-word > span {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+.m-hero__rest {
+  display: grid;
+  gap: 1.25rem;
+  justify-items: start;
+}
+
+.m-hero__lead {
+  margin: 0;
+  max-width: 30ch;
+  font-size: 1rem;
+  line-height: 1.35;
+  opacity: 0.85;
+}
+
+/* ------------------------------------------------------------------
+   Story — os 6 beneficios no celular
+   ------------------------------------------------------------------ */
+.story {
+  position: relative;
+  z-index: 2;
+  background: var(--areia-clara);
+  padding-bottom: clamp(4rem, 16vw, 7rem);
+}
+
+.story__counter {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 4.25rem var(--gutter) 0.75rem;
+  background: var(--areia-clara);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border-bottom: 1px solid color-mix(in srgb, var(--noite-urbana) 14%, transparent);
+}
+
+.story__count {
+  display: inline-flex;
+  gap: 0.4em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* sem `gap` entre itens: o respiro e padding DENTRO do item, para os itens
+   ficarem contiguos. Com gap, a linha do meio da tela caia no vao entre dois
+   beneficios e o contador congelava no anterior. (medido 28/09) */
+.story__list {
+  display: grid;
+  padding: 2rem var(--gutter) 0;
+}
+
+.story__item {
+  display: grid;
+  gap: 1rem;
+  padding-bottom: clamp(4rem, 18vw, 7rem);
+}
+
+.story__item:last-child {
+  padding-bottom: 0;
+}
+
+.story__photo {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.story__photo img {
+  width: 100%;
+  height: 116%;
+  margin-top: -8%;   /* folga para o parallax de -7% a 7% */
+  object-fit: cover;
+}
+
+.story__title {
+  margin: 0;
+  font-weight: 500;
+  font-size: clamp(2rem, 9vw, 3.25rem);
+  line-height: 0.97;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.story__lead {
+  margin: 0;
+  max-width: 32ch;
+  font-size: 1.0625rem;
+  line-height: 1.35;
+}
+
+/* ------------------------------------------------------------------
+   Rua 902 — Mare Funda
+   ------------------------------------------------------------------ */
+.place {
+  position: relative;
+  z-index: 2;
+  background: var(--mare-funda);
+  color: var(--areia-clara);
+  padding-block: clamp(4.5rem, 14vw, 9rem);
+}
+
+.place__grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.place__bracket {
+  color: var(--ceu-aberto);
+}
+
+.place__title {
+  font-size: clamp(2.25rem, 10vw, 5.25rem);
+  max-width: 11ch;
+}
+
+.place__body {
+  margin: 0;
+  max-width: 36ch;
+  font-size: clamp(1rem, 1.25vw, 1.25rem);
+  line-height: 1.35;
+  opacity: 0.88;
+}
+
+.place__media {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.place__photo {
+  flex: 1;
+  margin: 0;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.place__photo img {
+  width: 100%;
+  height: 112%;
+  margin-top: -6%;
+  object-fit: cover;
+  object-position: 60% 50%;
+}
+
+/* faixa vertical "URBAN STAY" colada na foto, como nos mockups */
+.place__strip {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ceu-aberto);
+}
+
+/* ------------------------------------------------------------------
+   Lista de abertura — sobre o gradiente da marca (o .backdrop fixo)
+   ------------------------------------------------------------------ */
+.lista {
+  position: relative;
+  z-index: 2;
+  padding-block: clamp(4.5rem, 14vw, 9rem);
+}
+
+.lista__grid {
+  display: grid;
+  gap: 2.5rem;
+}
+
+.lista__trio {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  height: clamp(13rem, 56vw, 32rem);
+}
+
+.lista__moldura {
+  flex: 1;
+  overflow: hidden;
+  /* a Moldura Urbana: hexagono vertical, ponta em cima e embaixo */
+  clip-path: polygon(50% 0%, 100% 13%, 100% 87%, 50% 100%, 0% 87%, 0% 13%);
+}
+
+.lista__moldura img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lista__copy {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.lista__title {
+  font-size: clamp(2.25rem, 10vw, 4.75rem);
+  max-width: 11ch;
+}
+
+.lista__body {
+  margin: 0;
+  max-width: 34ch;
+  font-size: clamp(1rem, 1.25vw, 1.25rem);
+  line-height: 1.35;
+}
+
+.lista__form {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 28rem;
+  margin-top: 1rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.field em {
+  font-style: normal;
+  opacity: 0.6;
+}
+
+.field input {
+  min-height: 2.75rem;
+  padding: 0.5rem 0;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--noite-urbana) 45%, transparent);
+  border-radius: 0;
+  background: transparent;
+  color: var(--noite-urbana);
+  font: 400 1.0625rem/1.3 "Clash Grotesk", "Helvetica Neue", Arial, sans-serif;
+  transition: border-color 0.2s var(--ease-out);
+}
+
+.field input:focus-visible {
+  outline: none;
+  border-bottom-color: var(--noite-urbana);
+  box-shadow: 0 1px 0 0 var(--noite-urbana);
+}
+
+.field input[aria-invalid="true"] {
+  border-bottom-color: var(--brasa);
+}
+
+.field small {
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.lista__status {
+  margin: 0;
+  min-height: 1.4em;
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+
+.lista__status:empty {
+  display: none;
+}
+
+.lista__privacy {
+  margin: 0;
+  font-size: 0.8125rem;
+  opacity: 0.75;
+}
+
+.lista__privacy a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+/* ------------------------------------------------------------------
+   Rodape — Noite Urbana, wordmark em Areia
+   ------------------------------------------------------------------ */
+.site-footer {
+  position: relative;
+  z-index: 2;
+  background: var(--noite-urbana);
+  color: var(--areia-clara);
+  padding-block: clamp(3.5rem, 9vw, 7rem) 1.5rem;
+}
+
+.site-footer__grid {
+  display: grid;
+  gap: 2.5rem;
+}
+
+.site-footer__about p {
+  margin: 0;
+  max-width: 24ch;
+  font-size: clamp(1.125rem, 1.6vw, 1.5rem);
+  line-height: 1.3;
+}
+
+.site-footer__about .site-footer__endorse {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  opacity: 0.7;
+}
+
+.site-footer__nav {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+  font-size: 1rem;
+}
+
+.site-footer__nav a,
+.site-footer__bottom a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  min-height: 1.75rem;
+}
+
+.site-footer__nav a:hover,
+.site-footer__bottom a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+.site-footer__grid > .site-footer__nav--inst {
+  opacity: 0.7;
+}
+
+.site-footer__mark {
+  width: 100%;
+  height: auto;
+}
+
+.site-footer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  font-size: 0.8125rem;
+  opacity: 0.7;
+}
+
+.site-footer__bottom nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+}
+
+/* ------------------------------------------------------------------
+   Desktop
+   ------------------------------------------------------------------ */
+@media (min-width: 1024px) {
+  .place__grid,
+  .lista__grid,
+  .site-footer__grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 2rem;
+  }
+
+  /* texto centralizado na altura da foto: as linhas 1 e 5 absorvem a sobra */
+  .place__grid { grid-template-rows: 1fr auto auto auto 1fr; row-gap: 1.5rem; }
+  .place__bracket { grid-column: 1 / 6; grid-row: 2; }
+  .place__title { grid-column: 1 / 6; grid-row: 3; }
+  .place__body { grid-column: 1 / 5; grid-row: 4; }
+  .place__media { grid-column: 7 / -1; grid-row: 1 / 6; margin-top: 0; }
+  /* no desktop a janela e paisagem, como a propria foto */
+  .place__photo { aspect-ratio: 5 / 4; }
+
+  .lista__grid { align-items: center; }
+  .lista__trio { grid-column: 1 / 7; }
+  .lista__copy { grid-column: 8 / -1; }
+
+  .site-footer__about { grid-column: 1 / 6; }
+  .site-footer__nav { grid-column: 8 / 10; }
+  .site-footer__nav--inst { grid-column: 10 / -1; }
+  .site-footer__mark,
+  .site-footer__bottom { grid-column: 1 / -1; }
+  .site-footer__mark { margin-top: 3rem; }
+
+  .lista__form .btn { justify-self: start; }
+}
+
+@media (max-width: 1023px) {
+  .lista__form .btn { width: 100%; }
+}

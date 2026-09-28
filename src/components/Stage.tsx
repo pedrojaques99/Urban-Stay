@@ -5,9 +5,11 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import {
   CARDS,
   CARD_W,
+  CARD_H,
   GRID,
   HERO,
-  CORPORATE,
+  SECTION,
+  SITE,
   RADIUS_ROW,
   RADIUS_WHEEL,
   ROW_CENTER_Y,
@@ -341,7 +343,7 @@ export function Stage() {
             <img
               className="card__img"
               // o card chega a ~555px no desktop (344.524 x 1.61) e a ~60vw no celular
-              {...imgProps(slot.card.photo.src, '(max-width: 1023px) 60vw, 36vw')}
+              {...imgProps(slot.card.photo.src, '(max-width: 1023px) 60vw, 36vw', CARD_W / CARD_H)}
               alt={j < CARDS.length ? slot.card.photo.alt : ''}
               aria-hidden={j >= CARDS.length}
               style={{ objectPosition: slot.card.photo.fit }}
@@ -388,7 +390,7 @@ export function Stage() {
             initial="hidden"
             animate="show"
           >
-            <a className="btn btn--ghost" href="/empresa.html">{CORPORATE.discover}</a>
+            <a className="btn btn--brasa" href={`#${SECTION.lista}`}>{SITE.cta}</a>
           </motion.div>
         </div>
 

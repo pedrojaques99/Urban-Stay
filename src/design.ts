@@ -218,17 +218,97 @@ export const HERO = {
   lead: 'No centro de Balneário. A dois passos da praia, a dois passos da noite.',
 } as const
 
+/* ------------------------------------------------------------------
+   Copy do site que vende (28/09/2026)
+
+   Toda string visivel mora aqui, e nao nos componentes: e o que deixa o
+   site pronto para ganhar a versao EN-US depois (um objeto por idioma).
+
+   Voz do vault Urban Stay: chamada curta e afirmativa em caixa-alta,
+   corpo sensorial e concreto. Sem tom corporativo, sem tarifario.
+
+   O empreendimento ainda nao opera: a acao unica do site e entrar na
+   lista de abertura. Nada de avaliacao, nota ou numero sem fonte.
+   ------------------------------------------------------------------ */
+
+/** ancoras da pagina; o `id` de cada secao usa o mesmo valor */
+export const SECTION = {
+  top: 'top',
+  casa: 'a-casa',
+  rua: 'rua-902',
+  lista: 'lista',
+} as const
+
+/** ancoras da home; fora dela, `toHome()` prefixa `/` para voltar e rolar */
 export const NAV_LINKS = [
-  { label: 'Empresa', href: '/empresa.html' },
-  { label: 'Atuação', href: '/atuacao.html' },
-  { label: 'Destino', href: '/destino.html' },
-  { label: 'Contato', href: '/contato.html' },
-]
+  { label: 'A casa', href: `#${SECTION.casa}` },
+  { label: 'Rua 902', href: `#${SECTION.rua}` },
+] as const
+
+export const toHome = (hash: string) => (window.location.pathname === '/' ? hash : `/${hash}`)
+
+export const SITE = {
+  skip: 'Ir para o conteúdo',
+  cta: 'Entrar na lista de abertura',
+  ctaShort: 'Lista de abertura',
+
+  story: {
+    label: 'A casa',
+    /** leitor de tela: "Benefício 2 de 6" */
+    counter: (n: number, total: number) => `Benefício ${n} de ${total}`,
+  },
+
+  place: {
+    bracket: 'Rua 902, Balneário Camboriú',
+    title: 'A praia de dia. A cidade de noite.',
+    body: 'A areia fica logo ali, o café da esquina abre cedo e a noite de BC não tem hora para acabar. A gente fica no meio de tudo, a poucos passos de cada um.',
+    photoAlt: 'Silhueta na janela com a cidade e o mar ao entardecer',
+    strip: 'Urban Stay',
+  },
+
+  lista: {
+    title: 'A moldura está quase pronta.',
+    body: 'Abrimos em breve na Rua 902. Deixa seu contato e fica sabendo da abertura antes de a agenda abrir.',
+    name: 'Nome',
+    phone: 'WhatsApp',
+    phoneHint: 'Com DDD',
+    privacy: 'Usamos seu contato só para avisar da abertura.',
+    privacyLink: 'Privacidade',
+    sending: 'Enviando…',
+    done: 'Pronto. Você está na lista e fica sabendo antes de todo mundo.',
+    /** sem destino configurado (VITE_WAITLIST_ENDPOINT): o prototipo diz a verdade */
+    prototype: 'Protótipo: seu contato não foi enviado. No site no ar, ele entra na lista de abertura.',
+    error: 'Não deu para enviar agora. Confere o WhatsApp e tenta de novo.',
+    invalidName: 'Diz seu nome para a gente.',
+    invalidPhone: 'Esse WhatsApp parece incompleto. Coloca com DDD.',
+  },
+
+  footer: {
+    line: 'Hospedagem urbana na Rua 902, Balneário Camboriú.',
+    /** endosso da marca-mae (Estrategia.pdf). Confirmar com o cliente. */
+    endorsement: 'Um projeto D’Sintra.',
+    navLabel: 'Navegação do rodapé',
+    instLabel: 'Institucional',
+    legalLabel: 'Informações legais',
+  },
+} as const
 
 export const LEGAL_LINKS = [
   { label: 'Privacidade', href: '/privacidade.html' },
   { label: 'Cookies', href: '/cookies.html' },
   { label: 'Termos de uso', href: '/termos-de-uso.html' },
+] as const
+
+/* ------------------------------------------------------------------
+   Paginas institucionais (Empresa, Atuacao, Destino, Contato), do trabalho
+   original. Ficam no ar e ligadas pelo rodape: o cliente decide quais
+   seguem. Abaixo, o conteudo e as medidas delas, como vieram.
+   ------------------------------------------------------------------ */
+export const INSTITUTIONAL_LINKS = [
+  { label: 'Empresa', href: '/empresa.html' },
+  { label: 'Atuação', href: '/atuacao.html' },
+  { label: 'Destino', href: '/destino.html' },
+  { label: 'Contato', href: '/contato.html' },
 ] as const
 
 /** Escalas novas derivadas dos frames 9068:919 / 9111:4, sem nodes próprios. */

@@ -1,39 +1,66 @@
 {
-  "/img/bed.png": [
-    480,
-    736
-  ],
-  "/img/camera.png": [
-    404
-  ],
-  "/img/cards.png": [
-    404
-  ],
-  "/img/memoir-paper.png": [
-    480,
-    735
-  ],
-  "/img/memoir-sunset.png": [
-    480,
-    960,
-    1200
-  ],
-  "/img/memoir-terrace.png": [
-    480,
-    736
-  ],
-  "/img/robe.png": [
-    480,
-    960,
-    1199
-  ],
-  "/img/suitcase.png": [
-    480,
-    501
-  ],
-  "/img/window.png": [
-    480,
-    960,
-    1600
-  ]
+  "/img/bed.png": {
+    "widths": [
+      480,
+      736
+    ],
+    "ratio": 0.8
+  },
+  "/img/camera.png": {
+    "widths": [
+      404
+    ],
+    "ratio": 1.572
+  },
+  "/img/cards.png": {
+    "widths": [
+      404
+    ],
+    "ratio": 1.572
+  },
+  "/img/memoir-paper.png": {
+    "widths": [
+      480,
+      735
+    ],
+    "ratio": 0.6676
+  },
+  "/img/memoir-sunset.png": {
+    "widths": [
+      480,
+      960,
+      1200
+    ],
+    "ratio": 0.8005
+  },
+  "/img/memoir-terrace.png": {
+    "widths": [
+      480,
+      736
+    ],
+    "ratio": 0.7503
+  },
+  "/img/robe.png": {
+    "widths": [
+      480,
+      960,
+      1199
+    ],
+    "ratio": 0.802
+  },
+  "/img/suitcase.png": {
+    "widths": [
+      480,
+      501
+    ],
+    "ratio": 0.6662
+  },
+  "/img/window.png": {
+    "widths": [
+      480,
+      960,
+      1600
+    ],
+    "ratio": 1.7778
+  }
 }

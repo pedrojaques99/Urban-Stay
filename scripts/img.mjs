@@ -1,5 +1,5 @@
 // Gera as versoes de tela das fotos: public/img/*.png|jpg -> public/img/opt/<nome>-<w>.webp
-// e grava src/img-manifest.json com as larguras de cada uma (lido por src/lib/img.ts).
+// e grava src/img-manifest.json com larguras e proporcao de cada uma (lido por src/lib/img.ts).
 //
 // Os PNG exportados do Figma continuam intactos em public/img: sao a fonte.
 // Rode depois de trocar ou acrescentar foto:  npm run img
@@ -25,7 +25,7 @@ let after = 0
 for (const file of (await readdir(SRC)).sort()) {
   if (!/\.(png|jpe?g)$/i.test(file) || SKIP.has(file)) continue
   const input = join(SRC, file)
-  const { width } = await sharp(input).metadata()
+  const { width, height } = await sharp(input).metadata()
   if (!width || width < MIN_WIDTH) continue
 
   const name = parse(file).name
@@ -37,9 +37,15 @@ for (const file of (await readdir(SRC)).sort()) {
     const info = await sharp(input).resize({ width: w }).webp({ quality: QUALITY }).toFile(out)
     after += info.size
   }
-  manifest[`/img/${file}`] = widths
+  // ratio (w/h) deixa o imgProps compensar o recorte `cover` numa caixa de outra proporcao
+  manifest[`/img/${file}`] = { widths, ratio: +(width / height).toFixed(4) }
   console.log(`${file.padEnd(24)} ${width}px -> ${widths.join(', ')}`)
 }
+
+// O gradiente com grain e fundo de CSS, nao <img>: vira UMA copia WebP sem
+// perda (pixel a pixel igual ao PNG, 173KB -> 66KB). Com perda o grain some.
+// Ele e o LCP da home: o fundo do loader cobre a tela inteira. (medido 28/09)
+await sharp(join(SRC, 'bg-gradient.png')).webp({ lossless: true }).toFile(join(OUT, 'bg-gradient.webp'))
 
 await writeFile('src/img-manifest.json', JSON.stringify(manifest, null, 2) + '\n')
 console.log(`\n${Object.keys(manifest).length} fotos · originais ${(before / 1e6).toFixed(1)}MB · versoes ${(after / 1e6).toFixed(1)}MB (todas as larguras somadas)`)

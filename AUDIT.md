@@ -5,42 +5,47 @@ Data: 28/09/2026 · alvo: `src/` + páginas publicadas via `vite preview` · nor
 
 ## Nota
 
-| Eixo | Nota | Por quê |
-|---|---|---|
-| Portão (4 detectores) | **fechado** | copy 6 achados, ruído 9 (seta em glifo); token pulado (repo sem linter de token) |
-| Mobile (390px) | **3/10** | o compacto nunca foi desenhado: a home só encolhe a arte de 860 → texto de 6–8px |
-| Leveza | **2/10** | LCP mobile 23,9s, 8,1MB na home; CLS 0,918 nas internas |
-| Limpo / high ticket | **5/10** | desktop fiel e bonito; placeholder visível ("[Endereço… a informar]", `.example`, "Formulário demonstrativo") mata o high ticket |
-| Acessibilidade (Lighthouse) | 100 home / 95 empresa | contraste do "Menu +" sobre o gradiente |
+**Depois do upgrade: 84/100** (antes 42). Detalhe por eixo na tabela; o que falta para 90+ está em "Próximo".
 
-Nota geral: **42/100**. A arte de desktop é boa; o problema é o que ela vira fora de 1440.
+| Eixo | Antes | Depois | Por quê |
+|---|---|---|---|
+| Portão (4 detectores) | fechado | **aberto** | copy e ruído zerados; motion-lint limpo; token pulado (repo sem linter de token) |
+| Mobile (390px) | 3/10 | **9/10** | abertura própria de 1 tela, texto ≥ 16px, história nativa |
+| Leveza | 2/10 | **8/10** | 8,1MB → 528KB, LCP 23,9s → 3,6s, CLS 0,918 → 0; resta o peso do JS |
+| Limpo / high ticket | 5/10 | **8/10** | uma ação só, paleta do vault, moldura em momentos-chave; placeholder segue nas institucionais (decisão do cliente) |
+| Acessibilidade (Lighthouse) | 100 / 95 | **100 / 100** | Brasa de botão ajustada para AA (4,53:1) |
+
 
 ## Superfícies
 
+Depois do upgrade (branch `upgrade/mobile-first`). A home virou uma página que vende; as institucionais seguem como vieram, ligadas pelo rodapé, para o cliente escolher.
+
 | Arquivo | Superfície (A/B/C) | Variável de negócio que move | Notas |
 |---|---|---|---|
-| src/App.tsx | A | tempo até o primeiro conteúdo (loader segura a página inteira) | loader espera `window.load` = todas as PNG eager |
-| src/components/Corporate.tsx | A | clique para as 4 páginas institucionais | diretório da home; setas em glifo |
-| src/components/Institutional.tsx | A | confiança institucional no rodapé da home | e-mail placeholder quebra linha a 390 |
-| src/components/InternalPages.tsx | A | contato comercial enviado | formulário não envia: conversão = 0 por construção |
-| src/components/Loader.tsx | A | tempo até o herói (LCP) | 250 linhas, 4 variantes + vitrine de dev; só `pulso` é usada |
-| src/components/Memoir.tsx | — | nenhuma: não é renderizado | código morto (+ CSS + 5MB de imagem referenciada por internas) |
-| src/components/Nav.tsx | A | orientação / acesso ao menu | "Menu +" e "Fechar ×" em glifo; contraste baixo no topo do gradiente |
-| src/components/Stage.tsx | A | primeira impressão de marca (o "uau") e leitura dos 6 benefícios | a 390 o texto some; metade inferior da tela vazia na esteira |
-| src/components/Voices.tsx | — | nenhuma: não é renderizado | código morto, depoimentos fictícios |
-| src/legal.tsx | C | conformidade LGPD | ok |
-| src/main.tsx | A | estabilidade do layout (CLS) | `--k` só é gravado depois da 1ª pintura |
+| src/App.tsx | A | tempo até ver a marca e o título (LCP) | abertura mobile ou show do desktop por largura |
+| src/components/Nav.tsx | A | inscrições na lista de abertura (CTA sempre à vista) | CTA Brasa fora da mesclagem |
+| src/components/Stage.tsx | A | primeira impressão de marca no desktop | intacto, só o CTA mudou |
+| src/components/MobileStage.tsx | A | primeira impressão de marca no celular sem custar rolagem | 1 tela de show, trio de molduras |
+| src/components/Story.tsx | A | leitura dos 6 benefícios no polegar | foto 4:5, título ≥ 32px, contador fixo |
+| src/components/Sections.tsx | A | inscrições na lista de abertura; confiança no lugar (Rua 902) | formulário nome + WhatsApp, sem fingir envio |
+| src/components/Loader.tsx | A | tempo até o título (LCP) | só o pulso, 0,8s mínimo, teto de fonte 2,5s |
+| src/components/InternalPages.tsx | A | confiança institucional (a decidir pelo cliente) | preservado |
+| src/components/Corporate.tsx | A | tipo das páginas institucionais | preservado; o diretório não está na home |
+| src/legal.tsx | C | conformidade LGPD da lista de abertura | texto atualizado; colchetes aguardam dados do cliente |
+| src/main.tsx | A | estabilidade do layout (CLS) | escala antes do 1º render |
 
 ## Tela vista
 
-Playwright (chromium, cache npx), `vite dev` :5180 e `vite preview` :5181, fontes carregadas, loader esperado.
-Quadros em `scratchpad/shoot/before/`.
+Antes (28/09, manhã): ver quadros em `scratchpad/shoot/before/` e a nota 42/100 no topo.
 
-- `/` 390×844 mobile+touch, 13 posições do trecho fixado: herói legível só no título; lead 8,2px, botão 6,3px; na esteira 55% da tela é gradiente vazio; título do benefício sangra ("A NOITE…" cortado pela borda na transição). Sem estouro horizontal, sem erro de console.
-- `/` 1440×900: fiel ao Figma, roda → esteira → diretório → rodapé ok.
-- `/empresa` `/atuacao` `/destino` `/contato` 390: legíveis (já usam `max(1rem, …)`); conteúdo passa por baixo do logo ao rolar; dados placeholder visíveis.
-- Lighthouse mobile (build): home perf 61 / LCP 23,9s / CLS 0,21 / 8,1MB · empresa perf 48 / LCP 11,7s / CLS 0,918.
-- corta-scan: só `line-height < 1` em título display (vaza, não corta: escolha tipográfica, falso positivo) e backdrop sob a nav (esperado). Nenhum corte real.
+Depois (28/09, tarde), Playwright chromium, `vite dev` :5180 e build em `vite preview` :5181, fontes carregadas, loader esperado:
+
+- `/` 390×844 mobile+touch, 13 posições: anel de 6 fotos nasce e fecha no trio de molduras em 1 tela; título 44px, lead 16px, CTA 16px; história com contador `01 / 06` fixo e fotos 4:5 abrindo da moldura; Rua 902 em Maré Funda; lista com trio em mosaico; rodapé com institucional. Estouro 0, erro de console 0.
+- `/` 1440×900: show do Figma intacto (roda → esteira), CTA Brasa no herói e na nav; Rua 902 com texto centralizado ao lado da foto 5:4; lista em duas colunas; rodapé com wordmark Areia. Estouro 0, erro 0.
+- `/empresa` `/atuacao` `/destino` `/contato` `/privacidade` em 390 e 1440: estouro 0, erro 0; alturas iguais às de antes (o conteúdo não mudou).
+- Formulário (390, com e sem movimento reduzido): CTA da nav leva à lista; vazio acusa os dois campos com mensagem; preenchido mostra "Protótipo: seu contato não foi enviado…". Com movimento reduzido o trio aparece montado sem animação.
+- corta-scan: nenhum corte real. Acusados e confirmados como desenho: nav-cta sobre a nav mesclada (duas camadas, AGENTS.md), benefícios empilhados da esteira desktop, título display com line-height 0,97 (vault).
+- Lighthouse mobile (build): home perf 88 · a11y 100 · boas práticas 100 · LCP 3,6s · CLS 0 · 528KB. Empresa perf 94 · a11y 100 · LCP 2,8s · CLS 0. SEO 66 por causa do `noindex` de protótipo (intencional).
 
 ## Achados (confirmados em arquivo:linha)
 
@@ -75,3 +80,12 @@ Quadros em `scratchpad/shoot/before/`.
 - **O show de scroll deveria existir no celular?** No desktop ele é a marca. No polegar são 8 telas pinadas pra ler 6 frases pequenas: o "uau" vira pedágio. Hierarquia de atenção: no mobile a foto e a frase têm que ser o conteúdo, não o intervalo entre fases.
 - **High ticket é promessa do tamanho da prova.** Página premium com "[Endereço a informar]" e formulário que não envia é o contrário de prova. Isso pesa mais que qualquer token.
 - **Leve** não é só peso: é também tempo até ler a primeira frase. Hoje são 24s no 4G.
+
+## Próximo (fora desta rodada)
+
+1. **JS**: framer-motion + GSAP + Lenis somam ~170KB gz (FCP 2,0s no 4G simulado). Caminho: `LazyMotion` + `m` no framer, e loader em HTML estático para pintar antes do JS.
+2. **Fotos reais** em alta: `cards`/`camera` têm 404px e `suitcase` 501px; as atuais são referência.
+3. **Lettering script "urban stay"**: não há arquivo na pasta da marca; pedir ao cliente antes de usar como grafismo.
+4. **Vault**: Areia sobre Brasa dá 4,499:1 e reprova AA por 0,001; corrigir o par na marca (o site usa `#CD3A00` no botão).
+5. **Institucionais**: o cliente decide quais ficam; `contato.html` ainda mostra dados de demonstração.
+6. **Destino da lista** (`VITE_WAITLIST_ENDPOINT`) e dados reais do jurídico.

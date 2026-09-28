@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import type { CSSProperties, FormEvent } from 'react'
-import { CORPORATE, INTERNAL, INTERNAL_LAYOUT, LEGAL_LINKS, NAV_LINKS } from '../design'
+import { CORPORATE, INSTITUTIONAL_LINKS, INTERNAL, INTERNAL_LAYOUT, LEGAL_LINKS } from '../design'
 import type { CorporatePage } from './Corporate'
 import { imgProps } from '../lib/img'
 import '../internal.css'
@@ -11,7 +11,7 @@ type Photo = { src: string; alt: string; caption: string }
 
 function Photograph({ photo, className = '', eager = false }: { photo: Photo; className?: string; eager?: boolean }) {
   return <figure className={`internal-photo ${className}`}>
-    <img {...imgProps(photo.src, '(max-width: 1023px) 100vw, 50vw')} alt={photo.alt} loading={eager ? 'eager' : 'lazy'} />
+    <img {...imgProps(photo.src, '(max-width: 1023px) 100vw, 50vw')} alt={photo.alt} loading={eager ? 'eager' : 'lazy'} fetchPriority={eager ? 'high' : undefined} />
     <figcaption>{photo.caption}</figcaption>
   </figure>
 }
@@ -136,7 +136,7 @@ export function InternalFooter({ page }: { page: CorporatePage }) {
   return <footer className="internal-footer" style={layout}>
     <div className="internal-frame">
       <a className="internal-next" href={next.href}><span className="internal-eyebrow">{INTERNAL.footer.nextLabel}</span><span>{next.label}</span><span aria-hidden="true"><ArrowUpRightIcon /></span></a>
-      <div className="internal-footer__body"><div><a href="/" aria-label="Urban Stay, voltar ao início"><img src="/img/logo.svg" alt="Urban Stay" /></a><p>{INTERNAL.footer.signature}</p></div><nav aria-label={INTERNAL.footer.linksLabel}>{NAV_LINKS.map(link => <a href={link.href} key={link.href}>{link.label}</a>)}</nav></div>
+      <div className="internal-footer__body"><div><a href="/" aria-label="Urban Stay, voltar ao início"><img src="/img/logo.svg" alt="Urban Stay" /></a><p>{INTERNAL.footer.signature}</p></div><nav aria-label={INTERNAL.footer.linksLabel}>{INSTITUTIONAL_LINKS.map(link => <a href={link.href} key={link.href}>{link.label}</a>)}</nav></div>
       <div className="internal-footer__bottom"><span>© {new Date().getFullYear()} Urban Stay®</span><nav aria-label={INTERNAL.footer.legalLabel}>{LEGAL_LINKS.map(link => <a href={link.href} key={link.href}>{link.label}</a>)}</nav></div>
     </div>
   </footer>
