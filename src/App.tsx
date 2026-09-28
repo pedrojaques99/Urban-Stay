@@ -5,7 +5,7 @@ import { Nav } from './components/Nav'
 import { Stage } from './components/Stage'
 import { MobileStage } from './components/MobileStage'
 import { Story } from './components/Story'
-import { Footer, Place, Waitlist } from './components/Sections'
+import { Footer, Manifesto, Place, Waitlist } from './components/Sections'
 import { InternalContent, NextPage } from './components/InternalPages'
 import type { CorporatePage } from './components/Corporate'
 import { CORPORATE, SITE } from './design'
@@ -63,6 +63,7 @@ export default function App() {
         ) : (
           <>
             {compact ? <><MobileStage ready={!loading} /><Story /></> : <Stage />}
+            <Manifesto />
             <Place />
             <Waitlist />
           </>

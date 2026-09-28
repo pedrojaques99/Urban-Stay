@@ -1,5 +1,5 @@
 import { Fragment } from 'react'
-import type { ReactNode } from 'react'
+import type { ReactElement, ReactNode } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { DUR, EASE_MASK, riseIn, sequence, wordRise, words } from '../lib/motion'
 import { imgProps } from '../lib/img'
@@ -20,6 +20,9 @@ import { imgProps } from '../lib/img'
 type Tag = 'h1' | 'h2' | 'h3' | 'p'
 const TAGS = { h1: motion.h1, h2: motion.h2, h3: motion.h3, p: motion.p }
 
+/** Uma linha do titulo: texto, ou texto e elementos (foto entre palavras). */
+type MaskLine = string | readonly (string | ReactElement)[]
+
 const titleSeq = (delay: number) => sequence(0.06, delay)
 const titleWord = wordRise('110%')
 const inView = { once: true, amount: 0.5 } as const
@@ -27,6 +30,8 @@ const inView = { once: true, amount: 0.5 } as const
  *  o acordeao aberto da Atuacao ficou em opacidade 0 com 24% dele a vista.
  *  O gatilho aqui independe da altura: qualquer pedaco visivel, 10% acima
  *  do pe da tela. (medido 28/09) */
+/** uma linha do titulo: dispara com a linha ja um pouco acima do pe da tela */
+const lineInView = { once: true, amount: 'some', margin: '0px 0px -12% 0px' } as const
 const blockInView = { once: true, amount: 'some', margin: '0px 0px -10% 0px' } as const
 
 export function MaskTitle({
@@ -36,40 +41,51 @@ export function MaskTitle({
   id,
   onMount = false,
   delay = 0.1,
+  perLine = false,
 }: {
-  /** uma linha, ou uma linha por item (cada uma vira um bloco) */
-  text: string | readonly string[]
+  /** uma linha, ou uma linha por item (cada uma vira um bloco). Um item
+   *  pode misturar texto e elementos: o elemento sobe pela mascara como
+   *  mais uma palavra (as fotos do manifesto). */
+  text: string | readonly MaskLine[]
   as?: Tag
   className?: string
   id?: string
   onMount?: boolean
   delay?: number
+  /** titulo mais alto que a tela: cada linha dispara quando ELA entra.
+   *  Com o gatilho no titulo inteiro (amount 0.5) um bloco de 1400px nunca
+   *  chegava a 50% visivel numa janela baixa e ficava apagado. */
+  perLine?: boolean
 }) {
   const Tag = TAGS[as]
   const lines = typeof text === 'string' ? [text] : text
   const trigger = onMount ? { animate: 'show' } : { whileInView: 'show', viewport: inView }
   return (
-    <Tag id={id} className={className} variants={titleSeq(delay)} initial="hidden" {...trigger}>
-      {lines.map((line, l) => (
-        <span key={`${line}-${l}`} className={lines.length > 1 ? 'mask-line' : undefined}>
-          {words(line).map((word, n, all) => (
-            <Fragment key={`${word}-${n}`}>
-              <span className="reveal-mask"><motion.span variants={titleWord}>{word}</motion.span></span>
-              {n < all.length - 1 ? ' ' : null}
-            </Fragment>
-          ))}
-        </span>
-      ))}
+    <Tag id={id} className={className} {...(perLine ? {} : { variants: titleSeq(delay), initial: 'hidden', ...trigger })}>
+      {lines.map((line, l) => {
+        const tokens = (typeof line === 'string' ? [line] : line).flatMap<string | ReactElement>((t) => (typeof t === 'string' ? words(t) : [t]))
+        const Line = perLine ? motion.span : 'span'
+        const own = perLine ? { variants: titleSeq(0.05), initial: 'hidden', whileInView: 'show', viewport: lineInView } : {}
+        return (
+          <Line key={l} className={lines.length > 1 ? 'mask-line' : undefined} {...own}>
+            {tokens.map((word, n, all) => (
+              <Fragment key={n}>
+                {/* elemento (foto) traz a propria entrada; palavra sobe pela mascara */}
+                <span className="reveal-mask">{typeof word === 'string' ? <motion.span variants={titleWord}>{word}</motion.span> : word}</span>
+                {n < all.length - 1 ? ' ' : null}
+              </Fragment>
+            ))}
+          </Line>
+        )
+      })}
     </Tag>
   )
 }
 
-const rise = riseIn(1, 0.25)
-
-export function Rise({ children, className, as = 'div' }: { children: ReactNode; className?: string; as?: 'div' | 'p' }) {
+export function Rise({ children, className, as = 'div', delay = 0 }: { children: ReactNode; className?: string; as?: 'div' | 'p'; delay?: number }) {
   const Tag = as === 'p' ? motion.p : motion.div
   return (
-    <Tag className={className} variants={rise} initial="hidden" whileInView="show" viewport={blockInView}>
+    <Tag className={className} variants={riseIn(1, 0.25 + delay)} initial="hidden" whileInView="show" viewport={blockInView}>
       {children}
     </Tag>
   )

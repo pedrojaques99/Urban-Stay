@@ -103,12 +103,6 @@ export const ROW_CENTER_Y = ROW_TOP + ROW_LEAD_H / 2
 /** Topo do bloco de texto, 64 abaixo do card grande. */
 export const COPY_TOP = ROW_TOP + ROW_LEAD_H + 64 // 759.845
 
-/**
- * Altura total da composição de benefícios, usada para encolher tudo
- * proporcionalmente quando a janela é mais baixa que o art-board.
- * (título 80 · 0.9 + gap 20 + lead 24 · 1.4 ≈ 125.6)
- */
-export const BENEFITS_H = COPY_TOP + 125.6 // 885.4
 
 /*
  * A ORDEM DESTE ARRAY E A ORDEM DA ESTEIRA.
@@ -246,6 +240,26 @@ export const SECTION = {
   lista: 'lista',
 } as const
 
+/**
+ * Manifesto, Figma 9111:4. Título de 266px em 1396 de largura: tudo abaixo
+ * está em `em` desse título (px / 266), então a composição escala inteira
+ * com a largura e cada linha cabe em qualquer tela. As fotos entram entre as
+ * palavras com o pé na linha de base e altura de uma maiúscula (178.721).
+ * `fit` é o recorte do Figma convertido para object-position.
+ */
+export const MANIFESTO = {
+  /** largura do título em em: 1396.521 / 266.004 */
+  measure: 5.25,
+  lines: [
+    ['A', { src: '/img/memoir-terrace.png', w: 1.3757, h: 0.6719, fit: '50% 80.7%' }, 'parte'], // 9111:24
+    ['da', 'viagem'],
+    ['que', { src: '/img/memoir-bath.png', w: 3.1442, h: 0.6975, fit: '50% 67.1%' }], // 9111:22
+    ['ninguém', { src: '/img/memoir-sunset.png', w: 0.8847, h: 0.6719, fit: '50% 17.5%' }], // 9111:26
+    ['lembra', { src: '/img/memoir-paper.png', w: 1.2826, h: 0.6719, fit: '50% 34.2%' }], // 9111:25
+    ['de', 'contar'],
+  ],
+} as const
+
 /** a lista mora na home: fora dela, `toHome` prefixa `/` para voltar e rolar */
 export const toHome = (hash: string) => (window.location.pathname === '/' ? hash : `/${hash}`)
 
@@ -258,6 +272,14 @@ export const SITE = {
     label: 'Nossa moldura',
     /** leitor de tela: "Benefício 2 de 6" */
     counter: (n: number, total: number) => `Benefício ${n} de ${total}`,
+  },
+
+  /* Figma 9111:4 — manifesto entre o show e a Rua 902 */
+  manifesto: {
+    body: [
+      'Você volta lembrando do bar cheio, da praia lotada, da fila do posto às três da manhã. Do quarto, nunca. Aqui a gente cuidou de tudo.',
+      'O ar frio quando a porta abre e o cheiro chega antes de você, o banho depois da areia, a cama depois das cinco.',
+    ],
   },
 
   place: {

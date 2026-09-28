@@ -102,6 +102,7 @@
 .btn--lg {
   min-height: 3.25rem;
   padding: 0.95rem 1.4rem;
+  --btn-cap-pad: 1.3rem;
   border-radius: 4px;
   font-size: 1rem;
   letter-spacing: 0.01em;
@@ -244,6 +245,7 @@
   .nav-cta .btn,
   .nav .btn {
     padding: 0.6rem 0.85rem;
+    --btn-cap-pad: 0.92rem;
     border-radius: 4px;
     font-size: 0.875rem;
     letter-spacing: 0.01em;
@@ -405,6 +407,78 @@
 /* ------------------------------------------------------------------
    Rua 902 — Mare Funda
    ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------
+   Manifesto — Figma 9111:4. O corpo do titulo sai da largura do frame
+   (container query): 1396 de largura para 266 de corpo = 5.25em por
+   linha. Assim cada linha cabe inteira em qualquer tela, como na arte.
+   ------------------------------------------------------------------ */
+.manifesto {
+  position: relative;
+  z-index: 2;
+  padding-block: clamp(4rem, 10vw, 8rem) clamp(4.5rem, 12vw, 9rem);
+  color: var(--noite-urbana);
+}
+
+.manifesto__frame {
+  container-type: inline-size;
+}
+
+.manifesto__title {
+  margin: 0;
+  font-size: calc(100cqi / 5.25);
+  font-weight: 500;
+  line-height: 0.9;
+  letter-spacing: -0.03em; /* -7.98 / 266 */
+  text-transform: uppercase;
+}
+
+/* uma linha da arte: as palavras e fotos se espalham como o texto
+   justificado do Figma, com a foto no pe da linha de base */
+.manifesto__title .mask-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+/* foto nunca espreme: a proporcao do recorte vem da arte */
+.manifesto__title .reveal-mask {
+  flex: none;
+}
+
+.manifesto__photo {
+  display: block;
+  overflow: hidden;
+  border-radius: clamp(3px, 0.42vw, 6px);
+}
+
+.manifesto__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.manifesto__body {
+  display: grid;
+  gap: 1.25rem 2rem;
+  margin-top: clamp(2rem, 4.3vw, 3.9rem);
+  font-size: clamp(1.0625rem, 0.55rem + 1.6vw, 2rem);
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  opacity: 0.8; /* no bloco: o Rise anima a opacidade do <p> ate 1 */
+}
+
+.manifesto__body p {
+  margin: 0;
+  max-width: 42ch;
+}
+
+@media (min-width: 768px) {
+  .manifesto__body {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 .place {
   position: relative;
   z-index: 2;
@@ -795,3 +869,22 @@
   }
 }
 
+/* ------------------------------------------------------------------
+   Texto do botao no centro optico. A Clash Grotesk sobra acima da
+   maiuscula e o line-height em volta dela deixava o respiro de cima
+   ~1,7px menor que o de baixo (medido 28/09, botao da nav a 1440).
+   `text-box` apara a linha na maiuscula e na linha de base, entao o
+   padding vertical vira o respiro real e fica igual em cima e embaixo.
+   --btn-cap-pad mantem a mesma altura de botao que o padding antigo.
+   Sem suporte (Firefox): continua o flex de antes. Botao com icone
+   fica no flex, porque o icone precisa do alinhamento dele.
+   ------------------------------------------------------------------ */
+@supports (text-box: trim-both cap alphabetic) {
+  .btn:not(:has(svg)) {
+    display: inline-block;
+    text-align: center;
+    text-box: trim-both cap alphabetic;
+    padding-block: var(--btn-cap-pad);
+    min-height: 0;
+  }
+}

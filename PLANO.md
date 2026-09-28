@@ -110,3 +110,24 @@ O esboço da comparação é o piso, não o teto. Elaboração, sem perder a lev
 Tudo em `transform`, `opacity` e `clip-path`, com `prefers-reduced-motion` virando corte seco.
 
 Fora desta rodada: versão EN, ensaio fotográfico real, destino definitivo da lista, dados comerciais reais.
+
+## Novas dobras da home — Figma `9235:72` (28/09)
+
+Duas dobras novas: `9111:4` (manifesto) e `9111:2336` (depoimentos).
+
+### 1. Manifesto `9111:4`: "A [foto] parte da viagem que ninguém lembra de contar" — ENTREGUE 28/09
+
+- **Onde entra:** logo depois do show, antes de `Place`. É a ponte entre a promessa (6 benefícios) e o endereço. Ordem: `Stage`/`MobileStage+Story` → **Manifesto** → `Place` → `Waitlist` → `Footer`.
+- **Como:** uma seção em `Sections.tsx` (`Manifesto`), copy em `SECTION.manifesto` no `design.ts`. O título é um `<h2>` de verdade: as fotos entram como `<img>` inline com `alt=""` entre as palavras, então leitor de tela e SEO leem a frase inteira.
+- **Reveal:** nada novo. `MaskTitle` sobe o título palavra por palavra, `RevealPhoto` abre cada foto inline pelos lados e `Rise` traz os dois parágrafos.
+- **Responsivo:** sem `--k`, porque o Figma só tem a arte desktop. Fica mobile-first em `clamp()`: a fonte do título acompanha a largura (`vw`) e as fotos têm a altura de 1 cap (`0.72em`), então a composição escala junto em qualquer tela. Abaixo de 640px os dois parágrafos viram uma coluna só, e as fotos grandes (banheira) encolhem para a mesma largura das outras, para a linha não quebrar feio.
+- **Fotos:** `memoir-terrace`, `memoir-sunset` e `memoir-paper` já estão em `public/img`. **Falta a da banheira:** exporto do Figma para `public/img/` e rodo `npm run img`.
+
+### 2. Depoimentos `9111:2336`: "Quem já dormiu aqui" — BLOQUEADO
+
+Isto choca com uma regra fechada do projeto: **o hotel ainda não opera**, e o combinado é "sem avaliações, notas ou números sem fonte". Os cards do Figma são placeholder ("Gabriel Oliveira, CEO Startup", 5 estrelas, o mesmo texto repetido 4 vezes). Publicar isso seria depoimento inventado.
+
+Caminhos (o dono decide):
+- **a)** Não publicar até existirem hóspedes reais. Recomendado.
+- **b)** Construir a dobra agora, mas escondida atrás de `SECTION.depoimentos = []` (vazio não renderiza). Ela liga quando chegarem depoimentos reais com nome e autorização.
+- **c)** Trocar por outra prova verdadeira que já exista (por exemplo, quem assina o projeto ou a localização), sem estrelas.

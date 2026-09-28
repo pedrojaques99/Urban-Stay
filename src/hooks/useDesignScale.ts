@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { FRAME_W, BENEFITS_H } from '../design'
+import { FRAME_W, FRAME_H } from '../design'
 
 export type DesignScale = {
   /** fator de escala do art-board de 1440 */
@@ -29,9 +29,13 @@ export function frameWidth(s: DesignScale) {
 /**
  * Quanto a composicao de beneficios precisa encolher para caber na altura da
  * janela. Em 960 de altura vale 1 — ou seja, identico ao frame.
+ *
+ * Mede contra o frame inteiro (960), nao contra o fim do texto (885.4): com
+ * 885.4 a legenda encostava na borda de baixo e era cortada em janela baixa.
+ * Assim as sobras de cima (67) e de baixo (74.6) do Figma encolhem junto.
  */
 export function benefitsFit(s: DesignScale) {
-  return Math.min(1, s.vh / s.k / BENEFITS_H)
+  return Math.min(1, s.vh / s.k / FRAME_H)
 }
 
 /**

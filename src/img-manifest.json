@@ -18,6 +18,13 @@
     ],
     "ratio": 1.572
   },
+  "/img/memoir-bath.png": {
+    "widths": [
+      480,
+      580
+    ],
+    "ratio": 0.6667
+  },
   "/img/memoir-paper.png": {
     "widths": [
       480,

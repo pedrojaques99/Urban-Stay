@@ -153,7 +153,8 @@ function layoutRow(active: number, out: RowFrame[]) {
 
   for (let j = 0; j < ROW_SLOTS; j++) {
     out[j] = {
-      center: GRID.margin + lefts[j] - anchor + widths[j] / 2,
+      // relativo a margem: o encolhimento de altura escala a fita, nunca a margem
+      center: lefts[j] - anchor + widths[j] / 2,
       width: widths[j],
     }
   }
@@ -215,7 +216,7 @@ export function Stage() {
 
         const slot = STRIP[j]
         const target = row[j]
-        const targetX = target.center * fb - frameW / 2
+        const targetX = GRID.margin + target.center * fb - frameW / 2
         const targetScale = (target.width / CARD_W) * fb
 
         let x = targetX

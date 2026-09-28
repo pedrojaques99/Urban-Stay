@@ -2,9 +2,9 @@ import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import { ArrowUpRightIcon } from '@phosphor-icons/react/dist/csr/ArrowUpRight'
-import { CARDS, INSTITUTIONAL_LINKS, LEGAL_LINKS, SECTION, SITE, toHome } from '../design'
+import { CARDS, INSTITUTIONAL_LINKS, LEGAL_LINKS, MANIFESTO, SECTION, SITE, toHome } from '../design'
 import { DUR, EASE_MASK, riseIn } from '../lib/motion'
-import { MaskTitle } from './Reveal'
+import { MaskTitle, Rise } from './Reveal'
 import { imgProps } from '../lib/img'
 
 /**
@@ -16,6 +16,59 @@ import { imgProps } from '../lib/img'
 const fadeUp = riseIn(1, 0.35)
 
 const byId = (id: string) => CARDS.find((c) => c.photo.id === id)!.photo
+
+/* ------------------------------------------------------------------
+   Manifesto — Figma 9111:4. O titulo e um <h2> de verdade: as fotos
+   entram entre as palavras com alt vazio, entao o leitor de tela le a
+   frase inteira. Geometria em `MANIFESTO` (design.ts), tudo em em.
+   ------------------------------------------------------------------ */
+export function Manifesto() {
+  const reduced = useReducedMotion()
+  const lines = MANIFESTO.lines.map((line) =>
+    line.map((token) =>
+      typeof token === 'string' ? token : (
+        <motion.span
+          key={token.src}
+          className="manifesto__photo"
+          style={{ width: `${token.w}em`, height: `${token.h}em` }}
+          variants={reduced ? undefined : photoOpen}
+        >
+          <motion.img
+            {...imgProps(token.src, `${Math.round((token.w / MANIFESTO.measure) * 100)}vw`, token.w / token.h)}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            style={{ objectPosition: token.fit }}
+            variants={reduced ? undefined : photoSettle}
+          />
+        </motion.span>
+      ),
+    ),
+  )
+
+  return (
+    <section className="manifesto">
+      <div className="site-frame manifesto__frame">
+        <MaskTitle text={lines} className="manifesto__title" perLine />
+        <div className="manifesto__body">
+          {SITE.manifesto.body.map((text, i) => <Rise key={text} as="p" delay={i * 0.12}>{text}</Rise>)}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* A foto do manifesto abre no lugar, do centro para as bordas, enquanto as
+   palavras sobem: uma so direcao de movimento por elemento. O recorte vai no
+   span e a escala na imagem, senao o clip-path escalaria junto. */
+const photoOpen = {
+  hidden: { clipPath: 'inset(0% 50% 0% 50%)' },
+  show: { clipPath: 'inset(0% 0% 0% 0%)', transition: { duration: DUR.reveal * 1.2, delay: 0.12, ease: EASE_MASK } },
+}
+const photoSettle = {
+  hidden: { scale: 1.14 },
+  show: { scale: 1, transition: { duration: DUR.reveal * 1.8, delay: 0.12, ease: EASE_MASK } },
+}
 
 /* ------------------------------------------------------------------
    Rua 902 — o lugar. Mare Funda, colchetes da marca, faixa vertical.

@@ -195,6 +195,8 @@ a {
   align-items: center;
   justify-content: center;
   padding: calc(14px * var(--k)) calc(22px * var(--k));
+  /* folga do topo da maiuscula ate a borda, com o texto aparado (site.css) */
+  --btn-cap-pad: calc(19.1px * var(--k));
   border-radius: calc(4px * var(--k));
   font-size: calc(14px * var(--k));
   line-height: 1.4;
@@ -319,7 +321,8 @@ a {
 .benefits {
   position: absolute;
   top: calc(759.845px * var(--kb));
-  left: calc(50% - var(--frame-half) + 32px * var(--kb));
+  /* margem em --k, como a nav: o texto alinha com o logo em qualquer altura */
+  left: calc(50% - var(--frame-half) + 32px * var(--k));
   width: calc(948px * var(--kb));
   z-index: 15;
 }
