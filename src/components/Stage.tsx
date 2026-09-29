@@ -56,10 +56,13 @@ const ORIGINAL_VH = 820
 const ORIGINAL_PIN = ORIGINAL_VH - 100
 /** vh de rolagem por parada da esteira no desenho original: (720 * 0.56) / 5 */
 const STEP_VH = (ORIGINAL_PIN * (1 - 0.44)) / 5
-const PIN_VH = ORIGINAL_PIN * 0.44 + STEP_VH * (STRIP_STOPS.length - 1)
+/** Roda 2x mais rapida que o desenho original (pedido do dono, 28/09): o
+ *  trecho da roda (0 → 0.44) cabe na metade da rolagem; a esteira nao muda. */
+const WHEEL_SPEED = 2
+const PIN_VH = (ORIGINAL_PIN * 0.44) / WHEEL_SPEED + STEP_VH * (STRIP_STOPS.length - 1)
 /** Altura total do trecho fixado, em viewports. */
 const TRACK_VH = PIN_VH + 100
-const at = (original: number) => (original * ORIGINAL_PIN) / PIN_VH
+const at = (original: number) => (original * ORIGINAL_PIN) / WHEEL_SPEED / PIN_VH
 
 const WHEEL_END = at(0.35)
 const BENCH_START = at(0.29)

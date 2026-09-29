@@ -94,7 +94,7 @@ Trust the **code** over README / CSS comments when they disagree. Known stale no
 
 ## The scroll show (`Stage.tsx`)
 
-One sticky `100svh` stage inside a ~`578svh` track (was 820 until 28/09: the strip now stops only at `STRIP_STOPS`, max 3, see below). One `ScrollTrigger` (`start: top top`, `end: bottom bottom`). **No per-card tweens.** Every frame, `draw(progress)` writes `transform` / `opacity` / `border-radius` onto the 12 card nodes.
+One sticky `100svh` stage inside a ~`420svh` track (was 820 until 28/09: the strip now stops only at `STRIP_STOPS`, max 3, and the wheel runs at `WHEEL_SPEED = 2`, half the original scroll). One `ScrollTrigger` (`start: top top`, `end: bottom bottom`). **No per-card tweens.** Every frame, `draw(progress)` writes `transform` / `opacity` / `border-radius` onto the 12 card nodes.
 
 Progress windows (they overlap on purpose so no card ever rests between phases):
 
