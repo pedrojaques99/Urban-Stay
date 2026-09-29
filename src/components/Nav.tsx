@@ -4,6 +4,7 @@ import { ListIcon } from '@phosphor-icons/react/dist/csr/List'
 import { XIcon } from '@phosphor-icons/react/dist/csr/X'
 import { CORPORATE, INSTITUTIONAL_LINKS, MENU_PHOTOS, SECTION, SITE, toHome } from '../design'
 import { imgProps } from '../lib/img'
+import { ThemeToggle } from './ThemeToggle'
 import { ENTER_DELAY, riseIn } from '../lib/motion'
 
 const navLogo = riseIn(1, ENTER_DELAY)
@@ -79,6 +80,7 @@ export function Nav({ solid = false }: { solid?: boolean }) {
 
         <span className="nav__right">
           <span className="btn btn--cta nav__ghost" aria-hidden="true">{SITE.ctaShort}</span>
+          <ThemeToggle className="nav-toggle" />
           <button
             className="nav-toggle"
             ref={toggle}
@@ -97,6 +99,7 @@ export function Nav({ solid = false }: { solid?: boolean }) {
         <motion.a className="btn btn--cta" href={toHome(`#${SECTION.lista}`)} variants={navCta} initial="hidden" animate="show">
           {SITE.ctaShort}
         </motion.a>
+        <span className="nav-toggle nav__ghost" aria-hidden="true" />
         <span className="nav-toggle nav__ghost" aria-hidden="true" />
       </div>
 

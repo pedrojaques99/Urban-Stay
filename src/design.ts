@@ -267,6 +267,7 @@ export const SITE = {
   skip: 'Ir para o conteúdo',
   cta: 'Entrar na lista de abertura',
   ctaShort: 'Lista de abertura',
+  theme: { toDark: 'Ver o site à noite', toLight: 'Ver o site de dia' },
 
   story: {
     label: 'Nossa moldura',

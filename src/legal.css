@@ -1,6 +1,6 @@
 /* Paginas legais (28/09): mesma nav, mesmo rodape e mesmo titulo do resto do
    site. Leitura longa: medida de 68ch, corpo 1.0625rem, leading 1.65. */
-body { background: var(--areia-clara); color: var(--noite-urbana); }
+body { background: var(--paper); color: var(--ink); }
 
 .legal-main {
   position: relative;
@@ -43,7 +43,7 @@ body { background: var(--areia-clara); color: var(--noite-urbana); }
 .legal-main section {
   padding-top: clamp(1.5rem, 3vw, 2rem);
   margin-top: clamp(1.5rem, 3vw, 2rem);
-  border-top: 1px solid color-mix(in srgb, var(--noite-urbana) 14%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
 }
 
 .legal-main h2 {

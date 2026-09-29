@@ -27,7 +27,8 @@ The home is now **one page that sells the stay**. The venue does not operate yet
 - The institutional pages (empresa/atuação/destino/contato) are **kept** and are the nav links: **links go to their own routes, never to anchors** (owner's call, 28/09). The only anchor is the waitlist CTA (`toHome('#lista')`), because the list lives on the home. **At every width and on every route** the links live only in the full-screen `<dialog>` menu (`.menu`, Noite Urbana, links in the h1 scale, each link swaps the photo on the right via `MENU_PHOTOS`, the waitlist button bottom-right; owner's call 28/09). The bar keeps logo, waitlist CTA and the Menu button. Every page ends with the same `Footer`; institutional pages add `NextPage` before it (empresa → atuação → destino → contato → empresa). The client decides which pages stay; do not delete them without that decision.
 - Copy lives in `design.ts` (`SITE`, `SECTION`, `INSTITUTIONAL_LINKS`), never in components: an EN-US version comes later.
 - New sections have no Figma node: they are **mobile-first in rem/clamp** (`site.css`), not `figma * --k`. The `--k` rule still binds everything that came from the art-board.
-- Palette: only the vault's six (Areia, Céu Aberto, Maré Funda, Pôr do Sol, Brasa, Noite Urbana). Brasa is for buttons only; button background is `--brasa-acao` (`#CD3A00`) because Areia on the vault's `#CE3A00` is 4.499:1 and fails AA.
+- Palette: **blue and yellow only, no orange** (owner's call, 28/09; the vault still lists Pôr do Sol and Brasa, the site does not use them). Céu Aberto, Maré Funda, `--sol` `#EBB536` (the yellow of the old Figma gradient) over Areia and Noite. Action button `.btn--cta` reads `--cta-bg/--cta-fg/--cta-hover`: Maré Funda + Areia on light, Sol + Noite on dark (night theme, menu, footer).
+- **Light/dark theme** (owner's call, 28/09): page surfaces use `--paper` / `--ink`, never Areia/Noite directly; `:root[data-theme="dark"]` swaps them. Surfaces that are always dark or sit on a photo (menu, footer, skip-link, Place, `.company-city`) use the brand colors directly. `src/theme-boot.js` is inlined into every page `<head>` by the Vite plugin in `vite.config.ts` (no flash): saved choice (`localStorage['us-theme']`) wins, else system dark, else night by clock (18h–6h). The toggle is `ThemeToggle` (`@theme-toggles/react` `Eclipse`, in the blended `.nav` layer with a ghost in `.nav-cta`); switching runs a View Transition whose new layer opens as a circle from the button (`DUR.eclipse`), straight swap without support or with reduced motion.
 - Waitlist destination: `VITE_WAITLIST_ENDPOINT` (POST JSON). Unset = prototype: the form validates and says nothing was sent. Never fake a success.
 - Photos: `imgProps(src, sizes, boxRatio)` from `lib/img.ts`. Pass the box ratio when the photo is cropped with `object-fit: cover`, or the browser downloads a size too small (landscape `window.png` in a 4:5 box was blurry).
 - Icons: `@phosphor-icons/react`, imported per file (`@phosphor-icons/react/dist/csr/ArrowUpRight`). Never an arrow character or a hand-drawn SVG.
@@ -45,7 +46,7 @@ The home is now **one page that sells the stay**. The venue does not operate yet
 - Phosphor icons sit above the text baseline unless their wrapper is flex (`span:has(> svg:only-child)` in styles.css).
 - The loader forces the top while it covers the page. Arriving with a hash (`/#lista` from the other pages) scrolls to it in `App.tsx` when the loader leaves; without that the waitlist button landed on the hero.
 - `Rise` (tall text blocks) triggers on `amount: 'some'` + bottom margin, never a fraction: with 0.5, and even 0.15, the open Atuação accordion stayed at opacity 0 with 24% of it on screen.
-- **One Brasa action on screen at a time**: CTAs carry `data-cta`; the nav pill goes quiet (`.nav-cta.is-quiet`) while any of them is visible. The home footer has no CTA (the form is right above it).
+- **One action button on screen at a time**: CTAs carry `data-cta`; the nav pill goes quiet (`.nav-cta.is-quiet`) while any of them is visible. The home footer has no CTA (the form is right above it).
 - The nav band also turns on over `data-nav-band` sections on the home (the waitlist: text on flat Areia, no photo).
 
 No test or lint scripts. TypeScript is strict (`noUnusedLocals`, `noUnusedParameters`, `verbatimModuleSyntax`). `npm run build` is the typecheck.
@@ -141,7 +142,7 @@ No background, no padding of its own: 32 from the top, 32 from the sides. Bar = 
 Two fixed layers on the same grid, because `mix-blend-mode: difference` only composites against the page backdrop if it sits on a top-level element. Any new stacking context (filter, opacity < 1, transform on a wrapper, `isolation`, `will-change` on an ancestor) kills the blend.
 
 - `.nav` — logo + links, white type, `mix-blend-mode: difference`
-- `.nav-cta` — the Brasa “Lista de abertura” pill, **outside** the blend (difference would invert it into two unreadable colors)
+- `.nav-cta` — the “Lista de abertura” action pill, **outside** the blend (difference would invert it into two unreadable colors)
 - `.nav__ghost` — invisible twin of the pill, keeps the links where they sit in Figma
 
 Do not wrap `.nav` in a new parent. Do not put `mix-blend-mode` on `.nav-cta`.

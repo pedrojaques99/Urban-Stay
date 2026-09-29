@@ -41,6 +41,19 @@
   --side-clip: 0px;
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Tema (claro/escuro, ThemeToggle): superficie e texto das paginas.
+     Menu, rodape e o que fica sobre foto usam a cor da marca direto. */
+  --paper: var(--areia-clara);
+  --ink: var(--noite-urbana);
+  color-scheme: light;
+}
+
+/* noite: Noite Urbana puxada para Mare Funda, texto Areia (15:1) */
+:root[data-theme="dark"] {
+  --paper: color-mix(in oklab, var(--noite-urbana), var(--mare-funda) 22%);
+  --ink: var(--areia-clara);
+  color-scheme: dark;
 }
 
 *,
@@ -58,8 +71,8 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: clip;
-  background: var(--areia-clara);
-  color: var(--noite-urbana);
+  background: var(--paper);
+  color: var(--ink);
 }
 
 body {
@@ -89,8 +102,8 @@ a {
 }
 
 ::selection {
-  background: var(--noite-urbana);
-  color: var(--areia-clara);
+  background: var(--ink);
+  color: var(--paper);
 }
 
 /* ------------------------------------------------------------------
@@ -103,7 +116,7 @@ a {
   position: fixed;
   inset: 0;
   z-index: 0;
-  background: var(--areia-clara);
+  background: var(--paper);
   pointer-events: none;
 }
 
@@ -130,6 +143,21 @@ a {
   will-change: transform;
   animation: sky-drift 22s ease-in-out infinite alternate;
 }
+
+/* ceu da noite: Noite no alto, Mare Funda, e o amarelo vira brilho de
+   cidade no horizonte, ainda azul em cima e amarelo embaixo */
+[data-theme="dark"] .sky {
+  background: linear-gradient(
+    180deg,
+    var(--noite-urbana) 0%,
+    color-mix(in oklab, var(--noite-urbana), var(--mare-funda) 60%) 40%,
+    var(--paper) 72%,
+    color-mix(in oklab, var(--paper), var(--sol) 30%) 100%
+  );
+}
+
+[data-theme="dark"] .sky::before { opacity: 0.45; }
+[data-theme="dark"] .sky::after { opacity: 0.35; }
 
 /* azul fundo que desce e volta pelo alto */
 .sky::before {
@@ -502,7 +530,7 @@ a {
 }
 
 .mark__slice {
-  fill: var(--noite-urbana);
+  fill: var(--ink);
 }
 
 .mark__slice {
@@ -566,7 +594,7 @@ a {
 
   /* o mesmo ceu do .backdrop, parado no primeiro quadro: a saida e a
      marca sumindo sobre o fundo que ja estava la, nao uma cortina abrindo */
-  background: var(--areia-clara);
+  background: var(--paper);
 }
 
 /* atras da marca, dentro do contexto do loader */
@@ -600,4 +628,14 @@ span:has(> svg:only-child) {
 a > svg,
 button > svg {
   flex: none;
+}
+
+/* ------------------------------------------------------------------
+   Troca de tema (ThemeToggle): o eclipse e o clip-path da camada nova;
+   a velha fica parada embaixo, sem o crossfade padrao do navegador.
+   ------------------------------------------------------------------ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
