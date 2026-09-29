@@ -18,6 +18,27 @@ export const EASE_OUT: [number, number, number, number] = [0.22, 1, 0.36, 1]
 /** Expo-out — o gesto caro das mascaras: arranca e assenta quase parando. */
 export const EASE_MASK: [number, number, number, number] = [0.16, 1, 0.3, 1]
 
+/**
+ * Duracoes de revelacao (s). Longas de proposito: sao entrada de marketing e
+ * scroll, nao controle respondendo a clique (esse teto de 300ms nao vale aqui).
+ */
+export const DUR = {
+  /** contador que troca de numero */
+  count: 0.45,
+  /** saida da tela de carga */
+  exit: 0.9,
+  /** trio e molduras que sobem */
+  rise: 1,
+  /** foto que abre da moldura para o retangulo */
+  reveal: 1.1,
+  /** o anel de fotos nascendo na abertura mobile */
+  intro: 1.6,
+  /** algo que segue o ponteiro e assenta (marca do rodape) */
+  follow: 0.6,
+  /** troca de tema: a persiana abrindo o dia ou a noite sobre a pagina */
+  theme: 1.1,
+} as const
+
 /** Respiro antes da primeira aparicao, para as fontes ja terem assentado. */
 export const ENTER_DELAY = 0.2
 
