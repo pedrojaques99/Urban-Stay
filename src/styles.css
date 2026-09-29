@@ -94,17 +94,97 @@ a {
 }
 
 /* ------------------------------------------------------------------
-   Fundo — o gradiente e uma unica camada fixa, como nos tres frames
+   Fundo — Areia lisa, fixa. So o comeco do heroi tem ceu (`Sky.tsx`):
+   Ceu Aberto sobre Areia com um toque de Mare Funda, nada fora do vault.
+   A deriva e so `transform` em duas manchas (compositor, sem repintar),
+   22–30s, e para quando o ceu some ou o sistema pede menos movimento.
    ------------------------------------------------------------------ */
 .backdrop {
   position: fixed;
   inset: 0;
   z-index: 0;
-  background-color: var(--areia-clara);
-  background-image: url("/img/opt/bg-gradient.webp");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
+  background: var(--areia-clara);
   pointer-events: none;
+}
+
+.sky {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    var(--ceu-aberto) 0%,
+    color-mix(in oklab, var(--ceu-aberto) 45%, var(--areia-clara)) 45%,
+    var(--areia-clara) 85%
+  );
+}
+
+.sky::before,
+.sky::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform;
+  animation: sky-drift 26s ease-in-out infinite alternate;
+}
+
+/* profundidade no alto: Ceu Aberto puxado para Mare Funda */
+.sky::before {
+  width: 95vmax;
+  height: 95vmax;
+  left: -30vmax;
+  top: -62vmax;
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--ceu-aberto), var(--mare-funda) 22%), transparent);
+  opacity: 0.55;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* luz de Areia que respira no horizonte */
+.sky::after {
+  z-index: 0;
+  width: 80vmax;
+  height: 80vmax;
+  right: -34vmax;
+  top: -12vmax;
+  background: radial-gradient(closest-side, var(--areia-clara), transparent);
+  opacity: 0.7;
+  transform: translate3d(0, 0, 0) scale(1);
+  animation-duration: 32s;
+  animation-direction: alternate-reverse;
+}
+
+/* grain parado por cima das manchas: some com o banding de 8 bits dos
+   radiais claros (anéis visíveis no 390, medido 28/09), como o PNG fazia */
+.sky__grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@keyframes sky-drift {
+  to { transform: translate3d(14vmax, 6vmax, 0) scale(1.12); }
+}
+
+/* o loader mostra o primeiro quadro; o ceu da pagina espera ele sair */
+.sky--still::before,
+.sky--still::after {
+  animation: none;
+}
+
+.is-loading .backdrop .sky::before,
+.is-loading .backdrop .sky::after,
+.sky.is-off::before,
+.sky.is-off::after {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky::before,
+  .sky::after {
+    animation: none;
+  }
 }
 
 /* ------------------------------------------------------------------
@@ -180,25 +260,6 @@ a {
   white-space: nowrap;
   transition: transform 0.4s var(--ease-out), background-color 0.4s var(--ease-out),
     color 0.4s var(--ease-out);
-}
-
-.btn--solid {
-  background: var(--noite-urbana);
-  color: var(--areia-clara);
-}
-
-
-
-.btn--solid:hover {
-  transform: translateY(calc(-2px * var(--k)));
-}
-
-.btn--ghost {
-  color: var(--noite-urbana);
-}
-
-.btn--ghost:hover {
-  background: rgba(2, 6, 8, 0.06);
 }
 
 /* ------------------------------------------------------------------
@@ -500,12 +561,14 @@ a {
   justify-items: center;
   gap: calc(30px * var(--k));
 
-  /* o mesmo fundo do .backdrop: a saida e a marca sumindo sobre o
-     gradiente que ja estava la, nao uma cortina abrindo */
-  background-color: var(--areia-clara);
-  background-image: url("/img/opt/bg-gradient.webp");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
+  /* o mesmo ceu do .backdrop, parado no primeiro quadro: a saida e a
+     marca sumindo sobre o fundo que ja estava la, nao uma cortina abrindo */
+  background: var(--areia-clara);
+}
+
+/* atras da marca, dentro do contexto do loader */
+.loader > .sky {
+  z-index: -1;
 }
 
 .loader__label {

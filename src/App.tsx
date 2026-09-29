@@ -3,6 +3,7 @@ import { AnimatePresence, MotionConfig } from 'framer-motion'
 import { Loader } from './components/Loader'
 import { Nav } from './components/Nav'
 import { Stage } from './components/Stage'
+import { Sky } from './components/Sky'
 import { MobileStage } from './components/MobileStage'
 import { Story } from './components/Story'
 import { Depoimentos, Footer, Manifesto, Place, Waitlist } from './components/Sections'
@@ -54,7 +55,7 @@ export default function App() {
       {/* motion-lint-disable-next-line loader-without-guard  tela de marca, nao espera de request: o Loader ja tem tempo minimo e teto */}
       <AnimatePresence>{loading && <Loader onDone={done} />}</AnimatePresence>
 
-      <div className={page ? 'internal-backdrop' : 'backdrop'} aria-hidden />
+      {page ? <div className="internal-backdrop" aria-hidden /> : <div className="backdrop" aria-hidden><Sky /></div>}
       <a className="skip-link" href="#conteudo">{SITE.skip}</a>
       <Nav solid={Boolean(page)} />
       <main id="conteudo" tabIndex={-1}>

@@ -40,13 +40,13 @@ The home is now **one page that sells the stay**. The venue does not operate yet
 
 - `applyDesignScale()` runs in `main.tsx` **before** the first render. Writing `--k` only in the hook's effect painted the page at scale 1 first: CLS 0.918.
 - The loader waits for **fonts only** (cap 2.5s), never `window.load`: that tied the LCP to the heaviest photo (23.9s on 4G).
-- The loader's full-screen background is the home's LCP. It is served as **lossless** WebP (`opt/bg-gradient.webp`, pixel-identical, 66KB) with `preload`. Lossy WebP destroys the grain.
+- The old Figma `bg-gradient.png` ended in amber `#EBB536`, outside the vault: removed 28/09 (owner's call). The sky is now CSS (`Sky.tsx`), palette-only, and exists **only at the start of the hero**: it fades out over the first screen of scroll (GSAP scrub) and its drift pauses when invisible (`.is-off`). Below that the backdrop is flat Areia. The loader renders `<Sky still />` frozen on frame one, and the page sky is paused under `html.is-loading`, so the handoff is seamless. The static SVG grain on top is what hides the 8-bit banding of the pale radials; do not remove it.
 - `.story__list` has no `gap`; spacing is padding inside each item. With a gap, the mid-screen line fell between items and the counter froze.
 - Phosphor icons sit above the text baseline unless their wrapper is flex (`span:has(> svg:only-child)` in styles.css).
 - The loader forces the top while it covers the page. Arriving with a hash (`/#lista` from the other pages) scrolls to it in `App.tsx` when the loader leaves; without that the waitlist button landed on the hero.
 - `Rise` (tall text blocks) triggers on `amount: 'some'` + bottom margin, never a fraction: with 0.5, and even 0.15, the open Atuação accordion stayed at opacity 0 with 24% of it on screen.
 - **One Brasa action on screen at a time**: CTAs carry `data-cta`; the nav pill goes quiet (`.nav-cta.is-quiet`) while any of them is visible. The home footer has no CTA (the form is right above it).
-- The nav band also turns on over `data-nav-band` sections on the home (the waitlist: text on the gradient, no photo).
+- The nav band also turns on over `data-nav-band` sections on the home (the waitlist: text on flat Areia, no photo).
 
 No test or lint scripts. TypeScript is strict (`noUnusedLocals`, `noUnusedParameters`, `verbatimModuleSyntax`). `npm run build` is the typecheck.
 
@@ -157,7 +157,7 @@ After font load, call `ScrollTrigger.refresh()` (already done in `Stage`). If yo
 
 ## Assets
 
-`public/img/` — exported from Figma. `bg-gradient.png` is the shared fill of the three frames, painted as one `position: fixed` `.backdrop`. Do not replace with a CSS gradient; the grain and stops are in the PNG. The site serves its lossless WebP copy (`opt/bg-gradient.webp`); regenerate with `npm run img`.
+`public/img/` — exported from Figma. The `position: fixed` `.backdrop` is flat Areia plus the hero sky (`Sky.tsx`, see Scars); there is no background image anymore.
 
 ## Do not
 
@@ -175,4 +175,4 @@ This is a visual, scroll-driven page. After any layout, style, or motion change:
 
 1. `npm run dev` and walk the full 820vh pin: birth → spin → unroll → strip walk → footer.
 2. Check 1440-wide (1:1 with Figma), >1440 (art capped, photos bleed), and <1024 (compact 860, nav links hidden).
-3. Confirm the active strip card’s left edge sits on the 32px margin, copy never dual-appears, and `mix-blend-mode` still inverts the nav over both the gradient and the photos.
+3. Confirm the active strip card’s left edge sits on the 32px margin, copy never dual-appears, and `mix-blend-mode` still inverts the nav over both the sky and the photos.

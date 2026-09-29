@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react'
 import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { DUR, EASE_MASK } from '../lib/motion'
+import { Sky } from './Sky'
 
 /**
  * Loading — o simbolo Urban Stay em movimento.
@@ -97,7 +98,7 @@ type LoaderProps = {
 }
 
 /**
- * Cobre a pagina com o mesmo gradiente do `.backdrop`, entao a saida nao e
+ * Cobre a pagina com o mesmo ceu do `.backdrop` (parado), entao a saida nao e
  * uma cortina abrindo: e a marca sumindo sobre o fundo que ja estava la.
  *
  * O fim depende de duas coisas: a fonte assentada (`document.fonts.ready`,
@@ -152,6 +153,7 @@ export function Loader({ minDuration = 1600, onDone }: LoaderProps) {
       role="status"
       aria-live="polite"
     >
+      <Sky still />
       <Mark size={104} motion="persiana" />
       <span className="loader__label">Urban Stay®</span>
     </motion.div>

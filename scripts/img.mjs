@@ -14,8 +14,8 @@ const WIDTHS = [480, 960, 1600]
 /** abaixo disto a foto nao vira versao: e icone ou avatar */
 const MIN_WIDTH = 300
 const QUALITY = 72
-/** so o que o site usa como fundo, e nao como <img> — o grain mora no PNG */
-const SKIP = new Set(['bg-gradient.png'])
+/** arquivos em public/img que nao viram versao de tela */
+const SKIP = new Set()
 
 await mkdir(OUT, { recursive: true })
 const manifest = {}
@@ -41,11 +41,6 @@ for (const file of (await readdir(SRC)).sort()) {
   manifest[`/img/${file}`] = { widths, ratio: +(width / height).toFixed(4) }
   console.log(`${file.padEnd(24)} ${width}px -> ${widths.join(', ')}`)
 }
-
-// O gradiente com grain e fundo de CSS, nao <img>: vira UMA copia WebP sem
-// perda (pixel a pixel igual ao PNG, 173KB -> 66KB). Com perda o grain some.
-// Ele e o LCP da home: o fundo do loader cobre a tela inteira. (medido 28/09)
-await sharp(join(SRC, 'bg-gradient.png')).webp({ lossless: true }).toFile(join(OUT, 'bg-gradient.webp'))
 
 await writeFile('src/img-manifest.json', JSON.stringify(manifest, null, 2) + '\n')
 console.log(`\n${Object.keys(manifest).length} fotos · originais ${(before / 1e6).toFixed(1)}MB · versoes ${(after / 1e6).toFixed(1)}MB (todas as larguras somadas)`)
