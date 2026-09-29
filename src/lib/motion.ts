@@ -35,8 +35,8 @@ export const DUR = {
   intro: 1.6,
   /** algo que segue o ponteiro e assenta (marca do rodape) */
   follow: 0.6,
-  /** a noite cobrindo a pagina a partir do botao de tema (eclipse) */
-  eclipse: 0.9,
+  /** troca de tema: a persiana abrindo o dia ou a noite sobre a pagina */
+  theme: 1.1,
 } as const
 
 /** Respiro antes da primeira aparicao, para as fontes ja terem assentado. */

@@ -124,14 +124,15 @@ a {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  /* azul em cima, amarelo embaixo, como o frame do Figma sem o laranja */
+  /* azul em cima, amarelo embaixo, com a Areia so como linha de horizonte:
+     cada extremo ocupa quase metade da tela (dono, 28/09) */
   background: linear-gradient(
     180deg,
-    color-mix(in oklab, var(--ceu-aberto), var(--mare-funda) 30%) 0%,
-    var(--ceu-aberto) 28%,
-    var(--areia-clara) 58%,
-    color-mix(in oklab, var(--areia-clara), var(--sol) 55%) 80%,
-    var(--sol) 100%
+    color-mix(in oklab, var(--ceu-aberto), var(--mare-funda) 35%) 0%,
+    var(--ceu-aberto) 34%,
+    var(--areia-clara) 47%,
+    color-mix(in oklab, var(--areia-clara), var(--sol) 60%) 58%,
+    var(--sol) 80%
   );
 }
 
@@ -150,9 +151,10 @@ a {
   background: linear-gradient(
     180deg,
     var(--noite-urbana) 0%,
-    color-mix(in oklab, var(--noite-urbana), var(--mare-funda) 60%) 40%,
-    var(--paper) 72%,
-    color-mix(in oklab, var(--paper), var(--sol) 30%) 100%
+    color-mix(in oklab, var(--noite-urbana), var(--mare-funda) 70%) 34%,
+    var(--paper) 50%,
+    color-mix(in oklab, var(--paper), var(--sol) 30%) 66%,
+    color-mix(in oklab, var(--paper), var(--sol) 45%) 90%
   );
 }
 
@@ -173,10 +175,10 @@ a {
 /* sol que sobe e respira por baixo */
 .sky::after {
   z-index: 0;
-  width: 90vmax;
-  height: 90vmax;
+  width: 100vmax;
+  height: 100vmax;
   right: -35vmax;
-  bottom: -55vmax;
+  bottom: -50vmax;
   background: radial-gradient(closest-side, var(--sol), transparent);
   opacity: 0.75;
   transform: translate3d(0, 0, 0) scale(1);
@@ -631,7 +633,7 @@ button > svg {
 }
 
 /* ------------------------------------------------------------------
-   Troca de tema (ThemeToggle): o eclipse e o clip-path da camada nova;
+   Troca de tema (ThemeToggle): a persiana e o clip-path da camada nova;
    a velha fica parada embaixo, sem o crossfade padrao do navegador.
    ------------------------------------------------------------------ */
 ::view-transition-old(root),
