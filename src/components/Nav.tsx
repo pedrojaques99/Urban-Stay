@@ -20,7 +20,7 @@ const here = Math.max(0, MENU_LINKS.findIndex((l) => l.href === window.location.
  *
  * - `.nav` mesclada em `difference`: logo, links e o botao do menu, brancos,
  *   invertem o que passar por baixo (gradiente ou foto).
- * - `.nav-cta` fora da mesclagem: o botao em Brasa. `difference` o viraria
+ * - `.nav-cta` fora da mesclagem: o botao de acao. `difference` o viraria
  *   em duas cores ilegiveis. Os `ghost` guardam o lugar de cada um na camada
  *   do outro, para os dois ficarem lado a lado sem se cobrir.
  *
@@ -52,7 +52,7 @@ export function Nav({ solid = false }: { solid?: boolean }) {
     return () => window.removeEventListener('scroll', check)
   }, [solid])
 
-  // Uma acao Brasa visivel por vez: o botao da nav fica quieto enquanto
+  // Uma acao visivel por vez: o botao da nav fica quieto enquanto
   // outro botao da lista (heroi, formulario, rodape, contato: `data-cta`)
   // estiver na tela. Dois botoes iguais lado a lado viravam realce que nao
   // decide nada. (auditoria 28/09)
@@ -78,7 +78,7 @@ export function Nav({ solid = false }: { solid?: boolean }) {
         </motion.a>
 
         <span className="nav__right">
-          <span className="btn btn--brasa nav__ghost" aria-hidden="true">{SITE.ctaShort}</span>
+          <span className="btn btn--cta nav__ghost" aria-hidden="true">{SITE.ctaShort}</span>
           <button
             className="nav-toggle"
             ref={toggle}
@@ -94,7 +94,7 @@ export function Nav({ solid = false }: { solid?: boolean }) {
       </nav>
 
       <div className={`nav-cta${quiet ? ' is-quiet' : ''}`}>
-        <motion.a className="btn btn--brasa" href={toHome(`#${SECTION.lista}`)} variants={navCta} initial="hidden" animate="show">
+        <motion.a className="btn btn--cta" href={toHome(`#${SECTION.lista}`)} variants={navCta} initial="hidden" animate="show">
           {SITE.ctaShort}
         </motion.a>
         <span className="nav-toggle nav__ghost" aria-hidden="true" />
@@ -130,7 +130,7 @@ export function Nav({ solid = false }: { solid?: boolean }) {
             />
           ))}
         </div>
-        <a className="btn btn--brasa btn--lg menu__cta" href={toHome(`#${SECTION.lista}`)} onClick={() => menu.current?.close()}>
+        <a className="btn btn--cta btn--lg menu__cta" href={toHome(`#${SECTION.lista}`)} onClick={() => menu.current?.close()}>
           {SITE.cta}
         </a>
       </dialog>

@@ -6,19 +6,17 @@
    e mobile-first, em rem/clamp, e o desktop entra por `min-width: 1024px`.
    Piso de legibilidade: nada abaixo de 0.75rem, corpo a partir de 1rem.
 
-   Cores: so a paleta de seis do vault (Areia, Ceu, Mare, Por do Sol,
-   Brasa, Noite). Brasa e a cor de acao e so aparece em botao.
+   Cores: azul e amarelo (Ceu Aberto, Mare Funda, Sol) sobre Areia e Noite.
+   Sem laranja (pedido do dono, 28/09). A acao e Mare Funda no claro e Sol
+   no escuro.
    ------------------------------------------------------------------ */
 :root {
   --ceu-aberto: #bfd9e3;
   --mare-funda: #1a3e56;
-  --por-do-sol: #df5b09;
-  --brasa: #ce3a00;
-  /* Brasa de fundo de botao: #CD3A00, 1 ponto de vermelho abaixo do vault.
-     Areia sobre #CE3A00 da 4.499:1 e reprova AA (texto < 18.66px) por tres
-     milesimos; #CD3A00 da 4.53:1 e e indistinguivel a olho. O vault promete
-     AA em todo par texto/fundo: levar ao cliente para corrigir la. (28/09) */
-  --brasa-acao: #cd3a00;
+  /* amarelo do gradiente do Figma (bg-gradient.png, base). A paleta perdeu
+     os laranjas (Por do Sol, Brasa) em 28/09, pedido do dono: e azul e
+     amarelo. Noite sobre este amarelo: 11:1. */
+  --sol: #ebb536;
 
   --gutter: clamp(1rem, 2.222vw, 2rem); /* 32 em 1440, 16 no celular */
 }
@@ -82,16 +80,27 @@
 }
 
 /* ------------------------------------------------------------------
-   Botao de acao — Brasa. Hover vai para Noite Urbana (dentro da paleta,
-   e mantem o texto Areia acima de AA). Areia sobre Brasa: 5.2:1.
+   Botao de acao. No claro: Mare Funda, texto Areia (10:1), hover Noite.
+   No escuro (menu, rodape): Sol, texto Noite (11:1), hover Areia.
    ------------------------------------------------------------------ */
-.btn--brasa {
-  background: var(--brasa-acao);
+.btn--cta {
+  background: var(--mare-funda);
   color: var(--areia-clara);
 }
 
-.btn--brasa:hover {
+.btn--cta:hover {
   background: var(--noite-urbana);
+}
+
+.menu .btn--cta,
+.site-footer .btn--cta {
+  background: var(--sol);
+  color: var(--noite-urbana);
+}
+
+.menu .btn--cta:hover,
+.site-footer .btn--cta:hover {
+  background: var(--areia-clara);
 }
 
 .btn:focus-visible {
@@ -803,7 +812,8 @@
 }
 
 .field input[aria-invalid="true"] {
-  border-bottom-color: var(--brasa);
+  border-bottom-color: var(--mare-funda);
+  box-shadow: 0 2px 0 0 var(--mare-funda);
 }
 
 .field small {

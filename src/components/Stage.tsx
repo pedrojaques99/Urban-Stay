@@ -413,7 +413,7 @@ export function Stage() {
             initial="hidden"
             animate="show"
           >
-            <a className="btn btn--brasa" href={`#${SECTION.lista}`} data-cta>{SITE.cta}</a>
+            <a className="btn btn--cta" href={`#${SECTION.lista}`} data-cta>{SITE.cta}</a>
           </motion.div>
         </div>
 

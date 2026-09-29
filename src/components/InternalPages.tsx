@@ -133,7 +133,7 @@ function Contact() {
         <label>{content.email}<input name="email" type="email" autoComplete="email" required maxLength={254} /></label>
         <label>{content.subject}<select name="assunto" defaultValue={subject}>{details.subjects.map(item => <option key={item}>{item}</option>)}</select></label>
         <label className="contact-form__wide">{content.message}<textarea name="mensagem" rows={4} required maxLength={5000} /></label>
-        <div className="contact-form__submit"><p className="internal-note">{content.formNote}</p><button className="btn btn--brasa btn--lg" type="submit" data-cta>{content.submit}<ArrowUpRightIcon aria-hidden="true" /></button></div>
+        <div className="contact-form__submit"><p className="internal-note">{content.formNote}</p><button className="btn btn--cta btn--lg" type="submit" data-cta>{content.submit}<ArrowUpRightIcon aria-hidden="true" /></button></div>
         <p className="internal-note contact-form__wide">{content.privacy} <a href="/privacidade.html">{content.privacyLink}</a></p>
         <p className="contact-form__wide" role="status">{status}</p>
         {summary && <div className="contact-result contact-form__wide" ref={result} tabIndex={-1} aria-label={content.summaryTitle}><h3>{content.summaryTitle}</h3><pre>{summary}</pre><button className="internal-link" type="button" onClick={async () => { try { await navigator.clipboard.writeText(summary); setStatus(content.copied) } catch { setStatus(content.copyError) } }}>{content.copy}</button></div>}

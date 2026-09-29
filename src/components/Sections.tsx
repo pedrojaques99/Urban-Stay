@@ -235,7 +235,7 @@ export function Waitlist() {
                 aria-invalid={Boolean(errors.whatsapp)} aria-describedby={errors.whatsapp ? 'lista-whatsapp-erro' : undefined} />
               {errors.whatsapp && <small id="lista-whatsapp-erro">{errors.whatsapp}</small>}
             </label>
-            <button className="btn btn--brasa btn--lg" type="submit" data-cta disabled={status === 'sending' || status === 'done'}>
+            <button className="btn btn--cta btn--lg" type="submit" data-cta disabled={status === 'sending' || status === 'done'}>
               {SITE.cta}
             </button>
             <p className="lista__status" role="status" aria-live="polite">{message}</p>
@@ -270,7 +270,7 @@ export function Footer({ cta = true }: { cta?: boolean }) {
           {INSTITUTIONAL_LINKS.map((link) => <a key={link.href} href={link.href}>{link.label}</a>)}
         </nav>
         {cta && (
-          <a className="btn btn--brasa btn--lg site-footer__cta" data-cta href={toHome(`#${SECTION.lista}`)}>
+          <a className="btn btn--cta btn--lg site-footer__cta" data-cta href={toHome(`#${SECTION.lista}`)}>
             {SITE.cta}
             <ArrowUpRightIcon aria-hidden="true" />
           </a>

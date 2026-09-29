@@ -111,11 +111,14 @@ a {
   position: absolute;
   inset: 0;
   overflow: hidden;
+  /* azul em cima, amarelo embaixo, como o frame do Figma sem o laranja */
   background: linear-gradient(
     180deg,
-    var(--ceu-aberto) 0%,
-    color-mix(in oklab, var(--ceu-aberto) 45%, var(--areia-clara)) 45%,
-    var(--areia-clara) 85%
+    color-mix(in oklab, var(--ceu-aberto), var(--mare-funda) 30%) 0%,
+    var(--ceu-aberto) 28%,
+    var(--areia-clara) 58%,
+    color-mix(in oklab, var(--areia-clara), var(--sol) 55%) 80%,
+    var(--sol) 100%
   );
 }
 
@@ -125,31 +128,31 @@ a {
   position: absolute;
   border-radius: 50%;
   will-change: transform;
-  animation: sky-drift 26s ease-in-out infinite alternate;
+  animation: sky-drift 22s ease-in-out infinite alternate;
 }
 
-/* profundidade no alto: Ceu Aberto puxado para Mare Funda */
+/* azul fundo que desce e volta pelo alto */
 .sky::before {
-  width: 95vmax;
-  height: 95vmax;
-  left: -30vmax;
-  top: -62vmax;
-  background: radial-gradient(closest-side, color-mix(in oklab, var(--ceu-aberto), var(--mare-funda) 22%), transparent);
-  opacity: 0.55;
+  width: 100vmax;
+  height: 100vmax;
+  left: -35vmax;
+  top: -60vmax;
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--ceu-aberto), var(--mare-funda) 40%), transparent);
+  opacity: 0.6;
   transform: translate3d(0, 0, 0) scale(1);
 }
 
-/* luz de Areia que respira no horizonte */
+/* sol que sobe e respira por baixo */
 .sky::after {
   z-index: 0;
-  width: 80vmax;
-  height: 80vmax;
-  right: -34vmax;
-  top: -12vmax;
-  background: radial-gradient(closest-side, var(--areia-clara), transparent);
-  opacity: 0.7;
+  width: 90vmax;
+  height: 90vmax;
+  right: -35vmax;
+  bottom: -55vmax;
+  background: radial-gradient(closest-side, var(--sol), transparent);
+  opacity: 0.75;
   transform: translate3d(0, 0, 0) scale(1);
-  animation-duration: 32s;
+  animation-duration: 28s;
   animation-direction: alternate-reverse;
 }
 
@@ -164,7 +167,7 @@ a {
 }
 
 @keyframes sky-drift {
-  to { transform: translate3d(14vmax, 6vmax, 0) scale(1.12); }
+  to { transform: translate3d(16vmax, 8vmax, 0) scale(1.15); }
 }
 
 /* o loader mostra o primeiro quadro; o ceu da pagina espera ele sair */
