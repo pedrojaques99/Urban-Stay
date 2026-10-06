@@ -1,7 +1,8 @@
 import type { CSSProperties } from 'react'
-import { useEffect, useId, useState } from 'react'
+import { useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { EASE_MASK } from '../lib/motion'
+import { DUR, EASE_MASK } from '../lib/motion'
+import { Sky } from './Sky'
 
 /**
  * Loading — o simbolo Urban Stay em movimento.
@@ -26,8 +27,12 @@ import { EASE_MASK } from '../lib/motion'
  * eixo. O `transform-box: view-box` do CSS e o que faz esses valores serem
  * lidos em unidades do viewBox.
  *
- * As quatro variantes sao keyframes de CSS, nao tweens de JS: o movimento e
- * periodico, roda no compositor e nao pede um frame de React por ciclo. O
+ * Duas leituras, ambas keyframe de CSS (rodam no compositor, sem frame de
+ * React): `persiana` e a oficial da tela de carga (28/09, escolha do dono):
+ * as fatias giram como laminas de um blackout, do centro para as pontas, e
+ * param juntas na forma original. `pulso` e o loop para esperas menores. As outras tres
+ * leituras (orbita, varredura, traco) foram testadas e descartadas em 28/09;
+ * estao no historico do git se voltarem a ser consideradas. O
  * `draw` de `Stage.tsx` continua unico dono dos transforms dos cards — o
  * loader vive fora do palco.
  */
@@ -43,100 +48,41 @@ const SLICES: { cx: number; dist: number; d: string }[] = [
   { cx: 442.75, dist: 3, d: "M430.024 347.776V165.022C430.024 164.259 429.048 163.971 428.623 164.609C427.096 166.937 425.532 169.239 423.918 171.529C423.492 172.142 422.516 171.829 422.516 171.079V103.22C422.516 102.457 423.505 102.157 423.93 102.782C431.488 114.069 438.083 126.057 443.601 138.632C456.064 167.049 462.984 198.445 462.984 231.467C462.984 274.024 451.497 313.89 431.463 348.151C431.063 348.827 430.024 348.552 430.024 347.776Z" },
 ]
 
-/** As quatro leituras do simbolo. */
-export type MarkVariant =
-  /** as cordas fecham na linha do equador e voltam, do centro para fora */
-  | 'pulso'
-  /** cada fatia vira de perfil e reabre — a esfera parece girar */
-  | 'orbita'
-  /** a marca fica fantasma e uma faixa de luz atravessa */
-  | 'varredura'
-  /** o traco desenha o contorno, o preenchimento chega depois */
-  | 'traco'
-
 type MarkProps = {
-  variant?: MarkVariant
   /** lado do simbolo em px de tela; vira `--mark-size` */
   size?: number
-  /** congela o movimento — usado na previa */
-  still?: boolean
+  /** `persiana` abre uma vez e para; `pulso` repete */
+  motion?: 'persiana' | 'pulso'
 }
 
 /**
  * O simbolo animado, sem moldura nem fundo. Serve para a tela de carga e
  * para qualquer espera menor (um botao, um bloco que ainda vai chegar).
- *
- * `useId` porque a varredura precisa de uma mascara com id proprio: duas
- * marcas na mesma pagina com o mesmo id fariam a segunda herdar a mascara
- * da primeira, e uma das duas ficaria parada.
  */
-export function Mark({ variant = 'pulso', size = 88, still = false }: MarkProps) {
-  // React 19 devolve ids com guillemets («r0»); sobra so o que e seguro
-  // dentro de um `url(#...)` de SVG
-  const uid = useId().replace(/[^a-zA-Z0-9]/g, '')
-  const maskId = `mark-sweep-${uid}`
-  const sweep = variant === 'varredura'
-
+export function Mark({ size = 88, motion = 'pulso' }: MarkProps) {
   return (
     <svg
-      className={`mark mark--${variant}${still ? ' is-still' : ''}`}
+      className={`mark mark--${motion}`}
       style={{ '--mark-size': `${size}px` } as CSSProperties}
       viewBox="0 0 463 463"
       role="img"
       aria-label="Carregando"
       xmlns="http://www.w3.org/2000/svg"
     >
-      {sweep && (
-        <defs>
-          {/* a faixa nasce e morre em preto para a luz ter borda macia */}
-          <linearGradient id={`${maskId}-g`} x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="#000" />
-            <stop offset="0.4" stopColor="#fff" />
-            <stop offset="0.6" stopColor="#fff" />
-            <stop offset="1" stopColor="#000" />
-          </linearGradient>
-          {/* userSpaceOnUse e o que deixa a faixa comecar fora do quadro */}
-          <mask id={maskId} maskUnits="userSpaceOnUse" x="-463" y="0" width="1389" height="463">
-            <rect
-              className="mark__sweep"
-              x="-463"
-              y="0"
-              width="463"
-              height="463"
-              fill={`url(#${maskId}-g)`}
-            />
-          </mask>
-        </defs>
-      )}
-
-      {/* fantasma: so na varredura, para a luz ter de onde emergir */}
-      {sweep && (
-        <g className="mark__ghost">
-          {SLICES.map((slice, i) => (
-            <path key={`ghost-${i}`} d={slice.d} />
-          ))}
-        </g>
-      )}
-
-      <g mask={sweep ? `url(#${maskId})` : undefined}>
-        {SLICES.map((slice, i) => (
-          <path
-            key={i}
-            className="mark__slice"
-            d={slice.d}
-            /* pathLength normaliza o traco: as fatias tem comprimentos
-               diferentes e, sem isso, cada uma desenharia num ritmo */
-            pathLength={1}
-            style={
-              {
-                '--i': i,
-                '--dist': slice.dist,
-                '--cx': `${slice.cx}px`,
-              } as CSSProperties
-            }
-          />
-        ))}
-      </g>
+      {SLICES.map((slice, i) => (
+        <path
+          key={i}
+          className="mark__slice"
+          d={slice.d}
+          style={
+            {
+              '--i': i,
+              '--dist': slice.dist,
+              '--cx': `${slice.cx}px`,
+            } as CSSProperties
+          }
+        />
+      ))}
     </svg>
   )
 }
@@ -146,32 +92,33 @@ export function Mark({ variant = 'pulso', size = 88, still = false }: MarkProps)
    ------------------------------------------------------------------ */
 
 type LoaderProps = {
-  variant?: MarkVariant
-  /** tempo minimo em tela, para a marca nao piscar numa carga rapida */
+  /** tempo minimo em tela: cobre a persiana inteira (1.6s), senao ela sai pela metade */
   minDuration?: number
   onDone: () => void
 }
 
 /**
- * Cobre a pagina com o mesmo gradiente do `.backdrop`, entao a saida nao e
+ * Cobre a pagina com o mesmo ceu do `.backdrop` (parado), entao a saida nao e
  * uma cortina abrindo: e a marca sumindo sobre o fundo que ja estava la.
  *
- * O fim depende de tres coisas: a fonte assentada (`document.fonts.ready` —
- * sem isso o titulo do hero troca de metrica na frente do usuario), o
- * `load` da janela e o tempo minimo.
+ * O fim depende de duas coisas: a fonte assentada (`document.fonts.ready`,
+ * sem isso o titulo do hero troca de metrica na frente do usuario) e o tempo
+ * minimo. NAO espera o `load` da janela: isso amarrava a saida a maior foto
+ * da pagina, e o titulo do hero (o LCP) so pintava depois dela. Medido em
+ * 28/09: LCP de 23,9s no 4G. As fotos que faltam chegam com a pagina ja a
+ * vista; `MAX_WAIT` segura o caso de fonte que nunca responde.
  */
-export function Loader({ variant = 'pulso', minDuration = 1400, onDone }: LoaderProps) {
+/** teto de espera pela fonte, em ms: depois disso a pagina aparece de qualquer jeito */
+const MAX_WAIT = 2500
+
+export function Loader({ minDuration = 1600, onDone }: LoaderProps) {
   useEffect(() => {
     let alive = true
     const started = performance.now()
 
-    const settled = Promise.all([
+    const settled = Promise.race([
       document.fonts ? document.fonts.ready : Promise.resolve(),
-      document.readyState === 'complete'
-        ? Promise.resolve()
-        : new Promise<void>((resolve) => {
-            window.addEventListener('load', () => resolve(), { once: true })
-          }),
+      new Promise((resolve) => window.setTimeout(resolve, MAX_WAIT)),
     ])
 
     let timer = 0
@@ -200,53 +147,15 @@ export function Loader({ variant = 'pulso', minDuration = 1400, onDone }: Loader
       className="loader"
       // sai subindo de leve enquanto some: o mesmo gesto das mascaras
       exit={{ opacity: 0, y: -24 }}
-      transition={{ duration: 0.9, ease: EASE_MASK }}
+      transition={{ duration: DUR.exit, ease: EASE_MASK }}
       // o Lenis ignora a roda enquanto o ponteiro estiver sobre a camada
       data-lenis-prevent
       role="status"
       aria-live="polite"
     >
-      <Mark variant={variant} size={104} />
+      <Sky still />
+      <Mark size={104} motion="persiana" />
       <span className="loader__label">Urban Stay®</span>
     </motion.div>
-  )
-}
-
-/* ------------------------------------------------------------------
-   Previa — abrir `?loader` para comparar as quatro
-   ------------------------------------------------------------------ */
-
-const VARIANTS: { key: MarkVariant; name: string; note: string }[] = [
-  { key: 'pulso', name: 'Pulso', note: 'as cordas fecham no equador, do centro para fora' },
-  { key: 'orbita', name: 'Órbita', note: 'cada fatia vira de perfil — a esfera parece girar' },
-  { key: 'varredura', name: 'Varredura', note: 'a marca fica fantasma e a luz atravessa' },
-  { key: 'traco', name: 'Traço', note: 'o contorno desenha, o preenchimento chega depois' },
-]
-
-/** So serve para escolher a variante. Sai junto com a chamada em `App.tsx`. */
-export function LoaderPreview() {
-  const [still, setStill] = useState(false)
-
-  return (
-    <div className="loader-preview">
-      <header className="loader-preview__bar">
-        <h1>Loading — Urban Stay®</h1>
-        <button type="button" className="btn btn--solid" onClick={() => setStill((s) => !s)}>
-          {still ? 'Rodar' : 'Congelar'}
-        </button>
-      </header>
-      <div className="loader-preview__grid">
-        {VARIANTS.map((v) => (
-          <figure key={v.key}>
-            <Mark variant={v.key} size={132} still={still} />
-            <figcaption>
-              <strong>{v.name}</strong>
-              <span>{v.note}</span>
-              <code>variant="{v.key}"</code>
-            </figcaption>
-          </figure>
-        ))}
-      </div>
-    </div>
   )
 }

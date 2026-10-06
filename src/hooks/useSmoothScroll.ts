@@ -16,6 +16,7 @@ export function useSmoothScroll() {
 
     const lenis = new Lenis({
       anchors: true,
+      // motion-lint-disable-next-line hardcoded-duration  config de inercia do Lenis, nao animacao de UI
       duration: 1.15,
       lerp: 0.09,
       wheelMultiplier: 1,

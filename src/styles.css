@@ -1,4 +1,25 @@
 /* ------------------------------------------------------------------
+   Clash Grotesk (ITF Free Font License) servida pelo proprio site.
+   O CSS do Fontshare bloqueava a renderizacao por ~0,9s no 4G (medido
+   28/09). Sem 600: a marca nao usa Bold, o peso de titulo e o 500.
+   ------------------------------------------------------------------ */
+@font-face {
+  font-family: "Clash Grotesk";
+  src: url("/fonts/clash-grotesk-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Clash Grotesk";
+  src: url("/fonts/clash-grotesk-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ------------------------------------------------------------------
    Urban Stay® — design tokens straight from the Figma library
    ------------------------------------------------------------------ */
 :root {
@@ -12,10 +33,6 @@
   /* Escala do bloco de beneficios: --k encolhido se a janela for baixa */
   --kb: 1;
 
-  /* Escala dos frames de 1440 cheios (9111:4 e 9111:2336):
-     --k, ou a janela inteira abaixo de 1024 */
-  --km: 1;
-
   /* Meia largura do art-board visivel, em px */
   --frame-half: 720px;
 
@@ -24,6 +41,19 @@
   --side-clip: 0px;
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Tema (claro/escuro, ThemeToggle): superficie e texto das paginas.
+     Menu, rodape e o que fica sobre foto usam a cor da marca direto. */
+  --paper: var(--areia-clara);
+  --ink: var(--noite-urbana);
+  color-scheme: light;
+}
+
+/* noite: Noite Urbana puxada para Mare Funda, texto Areia (15:1) */
+:root[data-theme="dark"] {
+  --paper: color-mix(in oklab, var(--noite-urbana), var(--mare-funda) 22%);
+  --ink: var(--areia-clara);
+  color-scheme: dark;
 }
 
 *,
@@ -41,8 +71,8 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: clip;
-  background: var(--areia-clara);
-  color: var(--noite-urbana);
+  background: var(--paper);
+  color: var(--ink);
 }
 
 body {
@@ -72,22 +102,122 @@ a {
 }
 
 ::selection {
-  background: var(--noite-urbana);
-  color: var(--areia-clara);
+  background: var(--ink);
+  color: var(--paper);
 }
 
 /* ------------------------------------------------------------------
-   Fundo — o gradiente e uma unica camada fixa, como nos tres frames
+   Fundo — Areia lisa, fixa. So o comeco do heroi tem ceu (`Sky.tsx`):
+   Ceu Aberto sobre Areia com um toque de Mare Funda, nada fora do vault.
+   A deriva e so `transform` em duas manchas (compositor, sem repintar),
+   22–30s, e para quando o ceu some ou o sistema pede menos movimento.
    ------------------------------------------------------------------ */
 .backdrop {
   position: fixed;
   inset: 0;
   z-index: 0;
-  background-color: var(--areia-clara);
-  background-image: url("/img/bg-gradient.png");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
+  background: var(--paper);
   pointer-events: none;
+}
+
+.sky {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  /* azul em cima, amarelo embaixo, com a Areia so como linha de horizonte:
+     cada extremo ocupa quase metade da tela (dono, 28/09) */
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--ceu-aberto), var(--mare-funda) 35%) 0%,
+    var(--ceu-aberto) 34%,
+    var(--areia-clara) 47%,
+    color-mix(in oklab, var(--areia-clara), var(--sol) 60%) 58%,
+    var(--sol) 80%
+  );
+}
+
+.sky::before,
+.sky::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform;
+  animation: sky-drift 22s ease-in-out infinite alternate;
+}
+
+/* ceu da noite: Noite no alto, Mare Funda, e o amarelo vira brilho de
+   cidade no horizonte, ainda azul em cima e amarelo embaixo */
+[data-theme="dark"] .sky {
+  background: linear-gradient(
+    180deg,
+    var(--noite-urbana) 0%,
+    color-mix(in oklab, var(--noite-urbana), var(--mare-funda) 70%) 34%,
+    var(--paper) 50%,
+    color-mix(in oklab, var(--paper), var(--sol) 30%) 66%,
+    color-mix(in oklab, var(--paper), var(--sol) 45%) 90%
+  );
+}
+
+[data-theme="dark"] .sky::before { opacity: 0.45; }
+[data-theme="dark"] .sky::after { opacity: 0.35; }
+
+/* azul fundo que desce e volta pelo alto */
+.sky::before {
+  width: 100vmax;
+  height: 100vmax;
+  left: -35vmax;
+  top: -60vmax;
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--ceu-aberto), var(--mare-funda) 40%), transparent);
+  opacity: 0.6;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* sol que sobe e respira por baixo */
+.sky::after {
+  z-index: 0;
+  width: 100vmax;
+  height: 100vmax;
+  right: -35vmax;
+  bottom: -50vmax;
+  background: radial-gradient(closest-side, var(--sol), transparent);
+  opacity: 0.75;
+  transform: translate3d(0, 0, 0) scale(1);
+  animation-duration: 28s;
+  animation-direction: alternate-reverse;
+}
+
+/* grain parado por cima das manchas: some com o banding de 8 bits dos
+   radiais claros (anéis visíveis no 390, medido 28/09), como o PNG fazia */
+.sky__grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@keyframes sky-drift {
+  to { transform: translate3d(16vmax, 8vmax, 0) scale(1.15); }
+}
+
+/* o loader mostra o primeiro quadro; o ceu da pagina espera ele sair */
+.sky--still::before,
+.sky--still::after {
+  animation: none;
+}
+
+.is-loading .backdrop .sky::before,
+.is-loading .backdrop .sky::after,
+.sky.is-off::before,
+.sky.is-off::after {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky::before,
+  .sky::after {
+    animation: none;
+  }
 }
 
 /* ------------------------------------------------------------------
@@ -148,36 +278,14 @@ a {
   filter: invert(1);
 }
 
-.nav__links {
-  display: flex;
-  align-items: center;
-  gap: calc(64px * var(--k));
-  white-space: nowrap;
-}
-
-/* wrapper de entrada: carrega a animacao para o <a> manter opacidade e hover */
-.nav__link {
-  display: inline-flex;
-}
-
-.nav__links a {
-  font-size: calc(14px * var(--k));
-  line-height: 1.4;
-  letter-spacing: calc(0.14px * var(--k));
-  opacity: 0.8;
-  transition: opacity 0.35s var(--ease-out);
-}
-
-.nav__links a:hover {
-  opacity: 1;
-}
-
 /* Botao preto — px 22 / py 14 / radius 4 */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: calc(14px * var(--k)) calc(22px * var(--k));
+  /* folga do topo da maiuscula ate a borda, com o texto aparado (site.css) */
+  --btn-cap-pad: calc(19.1px * var(--k));
   border-radius: calc(4px * var(--k));
   font-size: calc(14px * var(--k));
   line-height: 1.4;
@@ -185,25 +293,6 @@ a {
   white-space: nowrap;
   transition: transform 0.4s var(--ease-out), background-color 0.4s var(--ease-out),
     color 0.4s var(--ease-out);
-}
-
-.btn--solid {
-  background: var(--noite-urbana);
-  color: var(--areia-clara);
-}
-
-
-
-.btn--solid:hover {
-  transform: translateY(calc(-2px * var(--k)));
-}
-
-.btn--ghost {
-  color: var(--noite-urbana);
-}
-
-.btn--ghost:hover {
-  background: rgba(2, 6, 8, 0.06);
 }
 
 /* ------------------------------------------------------------------
@@ -302,7 +391,8 @@ a {
 .benefits {
   position: absolute;
   top: calc(759.845px * var(--kb));
-  left: calc(50% - var(--frame-half) + 32px * var(--kb));
+  /* margem em --k, como a nav: o texto alinha com o logo em qualquer altura */
+  left: calc(50% - var(--frame-half) + 32px * var(--k));
   width: calc(948px * var(--kb));
   z-index: 15;
 }
@@ -384,296 +474,6 @@ a {
 }
 
 /* ------------------------------------------------------------------
-   Frame 9111:4 — "A parte da viagem que ninguém lembra de contar"
-   Art-board de 1440 x 1607.
-   ------------------------------------------------------------------ */
-/* Sem fundo proprio: o gradiente e o `.backdrop` fixo, o mesmo do hero e
-   dos beneficios, entao ele atravessa o site inteiro sem emenda. */
-.memoir {
-  position: relative;
-  z-index: 2;
-  height: calc(1607px * var(--km));
-  /* o art-board nao traz respiro nenhum acima: as secoes encostavam uma na
-     outra. O vao entra aqui, em unidades de design, para encolher junto. */
-  margin-top: calc(200px * var(--km));
-  overflow: hidden;
-}
-
-/* As 1440 unidades do art-board, centradas. Abaixo de 1024 a moldura fica
-   mais larga que a janela e o corte cai igual dos dois lados. */
-.memoir__frame {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(1440px * var(--km));
-  height: 100%;
-}
-
-/* node 9111:23 — 266.004 / 0.9 / -7.9801, justificado */
-.memoir__title {
-  position: absolute;
-  left: calc(21.74px * var(--km));
-  top: calc(29.6px * var(--km));
-  width: calc(1396.521px * var(--km));
-  margin: 0;
-  font-weight: 500;
-  font-size: calc(266.004px * var(--km));
-  line-height: 0.9;
-  letter-spacing: calc(-7.9801px * var(--km));
-  text-transform: uppercase;
-  /* o y do Figma e o topo da cap-height, nao o topo da linha */
-  text-box: trim-both cap alphabetic;
-}
-
-.memoir__line,
-.memoir__line > span {
-  display: block;
-}
-
-/* `text-align-last` tambem: no arquivo a ultima linha ("de contar") sai
-   esticada de margem a margem. Linha de palavra unica nao tem espaco para
-   distribuir e continua encostada a esquerda, como no Figma. */
-.memoir__line > span {
-  text-align: justify;
-  text-align-last: justify;
-  will-change: transform, opacity;
-}
-
-/* nodes 9111:22 / :24 / :25 / :26 — posicao e tamanho vem do design.ts */
-.memoir__photo {
-  position: absolute;
-  margin: 0;
-  border-radius: calc(6px * var(--km));
-  overflow: hidden;
-}
-
-/* o enquadramento e o do arquivo: largura cheia, altura e deslocamento em
-   % da moldura. Escala junto sem esticar a foto. */
-.memoir__photo img {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  max-width: none;
-  object-fit: cover;
-}
-
-/* nodes 9111:19 e 9111:20 — 32 / 1.4 / 0.32, os dois no mesmo topo */
-.memoir__copy {
-  position: absolute;
-  top: calc(1466.6px * var(--km));
-  margin: 0;
-  font-size: calc(32px * var(--km));
-  line-height: 1.4;
-  letter-spacing: calc(0.32px * var(--km));
-  opacity: 0.8;
-  text-box: trim-both cap alphabetic;
-}
-
-/* ------------------------------------------------------------------
-   Frame 9111:2336 — "Quem já dormiu aqui"
-   Art-board de 1440 x 778. Sem fundo proprio: o gradiente e o `.backdrop`.
-   ------------------------------------------------------------------ */
-.voices {
-  position: relative;
-  z-index: 2;
-  /* 778 do art-board mais a folga que o coverflow pede em cima e embaixo */
-  height: calc(840px * var(--km));
-  /* mesmo respiro do memoir — ver o comentario la */
-  margin-top: calc(240px * var(--km));
-  overflow: hidden;
-}
-
-.voices__frame {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(1440px * var(--km));
-  height: 100%;
-}
-
-/* node 9111:2337 — 80 / 0.9 / -2.4, centrado na margem de 32 */
-.voices__title {
-  position: absolute;
-  top: calc(93.85px * var(--km));
-  left: calc(32px * var(--km));
-  width: calc(1376px * var(--km));
-  margin: 0;
-  font-weight: 500;
-  font-size: calc(80px * var(--km));
-  line-height: 0.9;
-  letter-spacing: calc(-2.4px * var(--km));
-  text-transform: uppercase;
-  text-align: center;
-  /* o y do Figma e o topo da cap-height, nao o topo da linha */
-  text-box: trim-both cap alphabetic;
-}
-
-/* so um inline-block para o transform pegar — sem recorte, que moveria
-   a baseline do inline-block para a borda inferior da caixa */
-.voices__word > span {
-  display: inline-block;
-  will-change: transform, opacity;
-}
-
-/* node 9114:2483 — coverflow. A janela do carrossel e a janela do
-   navegador, nao as 1440 unidades do art-board: assim a fila sai pelas
-   bordas da tela em vez de ser cortada no meio do fundo. Ver Voices.tsx. */
-.voices__viewport {
-  position: absolute;
-  /* 243.85 do arquivo menos o respiro que a entrada dos cards usa */
-  top: calc(123.85px * var(--km));
-  left: 0;
-  width: 100%;
-  /* folga para o card subir na entrada sem bater na aresta do recorte */
-  padding: calc(120px * var(--km)) 0;
-  /* A fuga do 3D fica no centro da janela, que e onde o card fica reto.
-     1400 para 320 de card e a mesma proporcao da referencia: a face que
-     vem para a frente cresce o suficiente para a parede ter volume, sem
-     esticar o card ao ponto de ele parecer outro tamanho. */
-  perspective: calc(1400px * var(--km));
-  perspective-origin: 50% 50%;
-  overflow: hidden;
-  cursor: grab;
-  /* arrastar o carrossel nao pode selecionar o depoimento */
-  user-select: none;
-  -webkit-user-select: none;
-  /* o dedo continua rolando a pagina na vertical */
-  touch-action: pan-y;
-}
-
-.voices__viewport:active {
-  cursor: grabbing;
-}
-
-.voices__track {
-  display: flex;
-  gap: calc(32px * var(--km));
-  /* os slots giram em 3D dentro da trilha; sem isto o giro achata */
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-
-.voices__slot {
-  flex: 0 0 calc(320px * var(--km));
-  transform-style: preserve-3d;
-  will-change: transform, opacity;
-}
-
-/* nodes 9111:2388 / 9114:2440 / :2454 / :2468 — todos do mesmo tamanho:
-   o que difere um card do outro na tela e so a perspectiva */
-.voices__card {
-  width: 100%;
-  height: calc(440.09px * var(--km));
-  margin: 0;
-  padding: calc(48px * var(--km));
-  border-radius: calc(6px * var(--km));
-  display: flex;
-  flex-direction: column;
-  /* o vao de 128 do arquivo e exatamente a sobra entre os dois blocos */
-  justify-content: space-between;
-  overflow: hidden;
-  will-change: transform, opacity;
-  /* ancora da camada de fundo */
-  position: relative;
-}
-
-/* O fundo do card.
-   Ele e uma camada propria, maior que o card, porque acompanha o cursor: so
-   `transform` muda, e o compositor resolve isso sozinho — nada de repintar o
-   gradiente ou mexer no layout. A folga de 12% em volta garante que o
-   deslocamento nunca descubra a borda. */
-.voices__fill {
-  position: absolute;
-  /* folga maior que o curso do paralaxe, para nunca descobrir a borda */
-  inset: -22%;
-  z-index: 0;
-  /* o gradiente da propria pagina, girado 180° — ver Voices.tsx */
-  background-image: url("/img/voices-card.jpg");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  will-change: transform;
-  pointer-events: none;
-}
-
-/* o conteudo fica acima da camada de fundo */
-.voices__head,
-.voices__who {
-  position: relative;
-  z-index: 1;
-}
-
-.voices__head {
-  display: flex;
-  flex-direction: column;
-  gap: calc(32px * var(--km));
-}
-
-/* node 9114:2424 — 103.106 x 18.09 */
-.voices__stars {
-  width: calc(103.106px * var(--km));
-  height: calc(18.09px * var(--km));
-}
-
-/* node 9111:2359 — 24 / 1.4 / 0.24 */
-.voices__quote {
-  margin: 0;
-  font-size: calc(24px * var(--km));
-  line-height: 1.4;
-  letter-spacing: calc(0.24px * var(--km));
-  /* a aspa de abertura fica pendurada fora da margem, como no arquivo */
-  text-indent: -0.45em;
-  text-box: trim-both cap alphabetic;
-}
-
-/* node 9111:2387 */
-.voices__who {
-  display: flex;
-  align-items: center;
-  gap: calc(16px * var(--km));
-}
-
-.voices__avatar {
-  flex: 0 0 auto;
-  width: calc(44px * var(--km));
-  height: calc(44px * var(--km));
-  border-radius: 999px;
-  object-fit: cover;
-}
-
-/* node 9111:2341 — 16 / 1.4 / 0.16 no arquivo.
-   O arquivo so tinha "GABRIEL OLIVEIRA / CEO STARTUP", que cabia em uma
-   linha; nome e empresa de verdade nao cabem nos 164 que sobram ao lado do
-   avatar. Entao: corpo menor, e a linha quebra em vez de ser cortada. */
-.voices__id {
-  display: flex;
-  flex-direction: column;
-  gap: calc(6px * var(--km));
-  min-width: 0;
-  line-height: 1.35;
-}
-
-/* as duas linhas ja vem em caixa alta no arquivo */
-.voices__name,
-.voices__stay {
-  text-transform: uppercase;
-  text-box: trim-both cap alphabetic;
-}
-
-.voices__name {
-  font-weight: 500;
-  font-size: calc(14px * var(--km));
-  letter-spacing: calc(0.14px * var(--km));
-}
-
-.voices__stay {
-  opacity: 0.8;
-  font-size: calc(12px * var(--km));
-  letter-spacing: calc(0.24px * var(--km));
-}
-
-/* ------------------------------------------------------------------
    Rodape simples para dar fim ao scroll
    ------------------------------------------------------------------ */
 .outro {
@@ -694,10 +494,6 @@ a {
    Mobile — o art-board de 1440 vira um recorte de 820
    ------------------------------------------------------------------ */
 @media (max-width: 1023px) {
-  .nav__links {
-    display: none;
-  }
-
   .nav {
     max-width: calc(100vw - 24px);
   }
@@ -735,21 +531,14 @@ a {
   --loop-ease: cubic-bezier(0.62, 0, 0.28, 1);
 }
 
-.mark__slice,
-.mark__ghost path {
-  fill: var(--noite-urbana);
+.mark__slice {
+  fill: var(--ink);
 }
 
 .mark__slice {
   transform-box: view-box;
   transform-origin: var(--cx) 231.492px;
   will-change: transform, opacity;
-}
-
-/* congela sem perder o quadro em que estava — usado pela previa */
-.mark.is-still .mark__slice,
-.mark.is-still .mark__sweep {
-  animation-play-state: paused;
 }
 
 /* --- pulso: as cordas fecham no equador e reabrem, do centro para fora - */
@@ -770,108 +559,28 @@ a {
   animation-delay: calc(var(--dist) * 0.12s);
 }
 
-/* --- orbita: cada fatia vira de perfil; a onda atravessa a esfera ------ */
-@keyframes mark-orbita {
-  0% {
-    transform: scaleX(1);
-    opacity: 1;
-  }
-  32% {
-    transform: scaleX(0.04);
-    opacity: 0.4;
-  }
-  64%,
-  100% {
-    transform: scaleX(1);
-    opacity: 1;
-  }
-}
 
-.mark--orbita .mark__slice {
-  animation: mark-orbita 2s var(--loop-ease) infinite;
-  /* atraso positivo e crescente: a onda entra pela esquerda */
-  animation-delay: calc(var(--i) * 0.16s);
-}
-
-/* --- varredura: a marca fica fantasma e a luz passa por cima ---------- */
-.mark--varredura .mark__ghost {
-  opacity: 0.14;
-}
-
-.mark__sweep {
-  transform-box: view-box;
-  /* a faixa nasce em x=-463 (fora do quadro) e anda ate x=463 */
-  animation: mark-sweep 1.9s linear infinite;
-}
-
-@keyframes mark-sweep {
+/* --- persiana (loader oficial, 28/09): cada corda gira no proprio eixo,
+   do centro para as pontas, e todas param juntas na forma original.
+   1.1s por corda + 0.16s por passo ate a ponta = 1.58s no total. --------- */
+@keyframes mark-persiana {
   from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(926px);
+    transform: scaleX(0);
   }
 }
 
-/* --- traco: o contorno desenha, o preenchimento chega depois ---------- */
-.mark--traco .mark__slice {
-  stroke: var(--noite-urbana);
-  stroke-width: 5;
-  stroke-linejoin: round;
-  /* pathLength=1 no TSX: um unico dasharray serve para as sete fatias */
-  stroke-dasharray: 1;
-  animation:
-    mark-traco-line 2.6s var(--loop-ease) infinite,
-    mark-traco-fill 2.6s var(--loop-ease) infinite;
-  animation-delay: calc(var(--dist) * 0.09s);
+.mark--persiana .mark__slice {
+  animation: mark-persiana 1.1s var(--loop-ease) both;
+  animation-delay: calc(var(--dist) * 0.16s);
 }
 
-@keyframes mark-traco-line {
-  0% {
-    stroke-dashoffset: 1;
-    stroke-opacity: 1;
-  }
-  50% {
-    stroke-dashoffset: 0;
-    stroke-opacity: 1;
-  }
-  /* o traco sai antes de voltar ao inicio, entao o salto do dash nao aparece */
-  86%,
-  100% {
-    stroke-dashoffset: 0;
-    stroke-opacity: 0;
-  }
-}
 
-@keyframes mark-traco-fill {
-  0%,
-  46% {
-    fill-opacity: 0;
-  }
-  72%,
-  86% {
-    fill-opacity: 1;
-  }
-  100% {
-    fill-opacity: 0;
-  }
-}
-
-/* Sem movimento: a marca fica inteira e parada. Na varredura a faixa
-   estaciona sobre o quadro — sem isso a mascara esconderia tudo. */
+/* Sem movimento: a marca fica inteira e parada. */
 @media (prefers-reduced-motion: reduce) {
   .mark__slice {
     animation: none;
     transform: none;
     opacity: 1;
-    fill-opacity: 1;
-    stroke-dashoffset: 0;
-    stroke-opacity: 0;
-  }
-
-  .mark__sweep {
-    animation: none;
-    transform: translateX(463px);
   }
 }
 
@@ -885,12 +594,14 @@ a {
   justify-items: center;
   gap: calc(30px * var(--k));
 
-  /* o mesmo fundo do .backdrop: a saida e a marca sumindo sobre o
-     gradiente que ja estava la, nao uma cortina abrindo */
-  background-color: var(--areia-clara);
-  background-image: url("/img/bg-gradient.png");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
+  /* o mesmo ceu do .backdrop, parado no primeiro quadro: a saida e a
+     marca sumindo sobre o fundo que ja estava la, nao uma cortina abrindo */
+  background: var(--paper);
+}
+
+/* atras da marca, dentro do contexto do loader */
+.loader > .sky {
+  z-index: -1;
 }
 
 .loader__label {
@@ -906,62 +617,27 @@ html.is-loading {
   overflow: hidden;
 }
 
-/* --- previa das variantes (`?loader`) — some junto com a chamada em App - */
-.loader-preview {
-  position: relative;
-  z-index: 1;
-  min-height: 100svh;
-  padding: calc(32px * var(--k));
-}
-
-.loader-preview__bar {
-  display: flex;
+/* ------------------------------------------------------------------
+   Icones Phosphor. O span que embrulha o icone vira caixa flex: sem isso
+   o SVG senta na linha de base do texto e fica acima do centro, o mesmo
+   defeito da seta em caractere que ele substituiu. (medido 28/09)
+   ------------------------------------------------------------------ */
+span:has(> svg:only-child) {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: calc(24px * var(--k));
-  margin-bottom: calc(48px * var(--k));
 }
 
-.loader-preview__bar h1 {
-  margin: 0;
-  font-size: calc(24px * var(--k));
-  font-weight: 500;
-  letter-spacing: calc(-0.4px * var(--k));
+a > svg,
+button > svg {
+  flex: none;
 }
 
-.loader-preview__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: calc(24px * var(--k));
-}
-
-.loader-preview__grid figure {
-  display: grid;
-  justify-items: center;
-  gap: calc(28px * var(--k));
-  margin: 0;
-  padding: calc(48px * var(--k)) calc(24px * var(--k)) calc(28px * var(--k));
-  border: 1px solid color-mix(in srgb, var(--noite-urbana) 12%, transparent);
-  border-radius: calc(12px * var(--k));
-}
-
-.loader-preview__grid figcaption {
-  display: grid;
-  justify-items: center;
-  gap: calc(6px * var(--k));
-  text-align: center;
-  font-size: calc(14px * var(--k));
-}
-
-.loader-preview__grid strong {
-  font-weight: 500;
-}
-
-.loader-preview__grid span {
-  opacity: 0.6;
-}
-
-.loader-preview__grid code {
-  font-size: calc(12px * var(--k));
-  opacity: 0.45;
+/* ------------------------------------------------------------------
+   Troca de tema (ThemeToggle): a persiana e o clip-path da camada nova;
+   a velha fica parada embaixo, sem o crossfade padrao do navegador.
+   ------------------------------------------------------------------ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }

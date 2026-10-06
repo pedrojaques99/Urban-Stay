@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { FRAME_W, BENEFITS_H } from '../design'
+import { FRAME_W, FRAME_H } from '../design'
 
 export type DesignScale = {
   /** fator de escala do art-board de 1440 */
@@ -29,22 +29,40 @@ export function frameWidth(s: DesignScale) {
 /**
  * Quanto a composicao de beneficios precisa encolher para caber na altura da
  * janela. Em 960 de altura vale 1 — ou seja, identico ao frame.
+ *
+ * Mede contra o frame inteiro (960), nao contra o fim do texto (885.4): com
+ * 885.4 a legenda encostava na borda de baixo e era cortada em janela baixa.
+ * Assim as sobras de cima (67) e de baixo (74.6) do Figma encolhem junto.
  */
 export function benefitsFit(s: DesignScale) {
-  return Math.min(1, s.vh / s.k / BENEFITS_H)
+  return Math.min(1, s.vh / s.k / FRAME_H)
 }
 
 /**
- * Escala dos frames que ocupam o art-board inteiro — 9111:4 (a viagem que
- * ninguem lembra) e 9111:2336 (quem ja dormiu aqui).
+ * Mede a janela e grava as variaveis de escala no `:root`.
  *
- * Igual a `--k` de 1024 para cima. Abaixo disso ela nao pode virar o
- * art-board compacto de 860: essas composicoes usam as 1440 unidades de
- * ponta a ponta, e recorta-las comeria a primeira e a ultima letra do
- * titulo, ou os cards das pontas. Entao encolhe em vez de cortar.
+ * Roda tambem no `main.tsx`, ANTES do primeiro render: se `--k` so fosse
+ * gravado no efeito do hook, a pagina pintava uma vez na escala 1 (a do
+ * `:root` do CSS) e encolhia na frente do usuario. Medido em 28/09: CLS 0,918
+ * nas paginas internas a 390px.
  */
-export function wideFrameScale(s: DesignScale) {
-  return s.compact ? s.vw / FRAME_W : s.k
+export function applyDesignScale(): DesignScale {
+  const next = measure()
+  const root = document.documentElement
+  const frame = frameWidth(next)
+  const fb = benefitsFit(next)
+
+  root.style.setProperty('--k', String(next.k))
+  // escala do bloco de beneficios: k, encolhido se a janela for baixa
+  root.style.setProperty('--kb', String(next.k * fb))
+  // meia largura do art-board visivel, em px
+  root.style.setProperty('--frame-half', `${(frame * next.k) / 2}px`)
+  // sobra lateral quando a janela passa de 1440 (alinhamento, nao recorte)
+  root.style.setProperty(
+    '--side-clip',
+    `${Math.max(0, (next.vw - frame * next.k) / 2)}px`,
+  )
+  return next
 }
 
 /**
@@ -59,26 +77,16 @@ export function useDesignScale(): DesignScale {
   )
 
   useEffect(() => {
+    // No celular a primeira rolagem recolhe a barra de endereco: `resize` so
+    // de altura. Re-renderizar o App e regravar o `:root` ali travava a
+    // primeira rolagem (05/10). Abaixo de 1024 nada depende da altura (`--kb`
+    // e do desktop; o palco usa svh), entao so a largura conta.
+    let lastW = -1
     const apply = () => {
-      const next = measure()
-      setScale(next)
-
-      const root = document.documentElement
-      const frame = frameWidth(next)
-      const fb = benefitsFit(next)
-
-      root.style.setProperty('--k', String(next.k))
-      // escala do bloco de beneficios: k, encolhido se a janela for baixa
-      root.style.setProperty('--kb', String(next.k * fb))
-      // escala dos frames que ocupam as 1440 unidades — ver wideFrameScale
-      root.style.setProperty('--km', String(wideFrameScale(next)))
-      // meia largura do art-board visivel, em px
-      root.style.setProperty('--frame-half', `${(frame * next.k) / 2}px`)
-      // sobra lateral quando a janela passa de 1440 (alinhamento, nao recorte)
-      root.style.setProperty(
-        '--side-clip',
-        `${Math.max(0, (next.vw - frame * next.k) / 2)}px`,
-      )
+      const w = document.documentElement.clientWidth
+      if (w === lastW && w < 1024) return
+      lastW = w
+      setScale(applyDesignScale())
     }
 
     apply()

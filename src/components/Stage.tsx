@@ -5,9 +5,12 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import {
   CARDS,
   CARD_W,
+  CARD_H,
   GRID,
   HERO,
-  CORPORATE,
+  SECTION,
+  SITE,
+  STRIP_STOPS,
   RADIUS_ROW,
   RADIUS_WHEEL,
   ROW_CENTER_Y,
@@ -26,13 +29,13 @@ import {
   smoothstep,
 } from '../lib/math'
 import { ENTER_DELAY, riseIn, sequence, wordRise, words } from '../lib/motion'
+import { imgProps } from '../lib/img'
 
 gsap.registerPlugin(ScrollTrigger)
 
-/** Altura total do trecho fixado, em viewports. */
-const TRACK_VH = 820
+/* --- marcos do timeline -----------------------------------------------
+   Medidos no trecho ORIGINAL de 820vh (roda + 6 paradas da esteira):
 
-/* --- marcos do timeline, em progresso normalizado do trecho fixado ---
    0.00 → 0.35   a roda nasce no centro, gira e cresce ate o frame 9068:893
    0.29 → 0.44   a roda continua girando enquanto se desenrola na esteira
    0.33 → ...    a headline se solta do centro e sobe junto com o scroll
@@ -40,14 +43,34 @@ const TRACK_VH = 820
    0.44 → 1.00   a esteira anda: quem encosta na margem cresce, o resto encolhe
 
    As janelas se sobrepoem de proposito — nenhum card chega a parar entre
-   uma fase e a seguinte. */
-const WHEEL_END = 0.35
-const BENCH_START = 0.29
-const BENCH_END = 0.44
-const HERO_RELEASE = 0.33
-const COPY_IN_START = 0.38
-const COPY_IN_END = 0.46
-const CAROUSEL_START = 0.44
+   uma fase e a seguinte.
+
+   Desde 28/09 a esteira para so em `STRIP_STOPS` (no maximo 3): seis
+   paradas presas eram repetitivas e intrusivas. A roda mantem o mesmo
+   comprimento em vh; so o trecho da esteira encolhe, com o mesmo passo
+   por parada. Por isso os marcos abaixo sao reescalados de 820 para o
+   trecho novo, e nao mantidos como fracao. */
+const ORIGINAL_VH = 820
+/** O progresso do ScrollTrigger corre sobre a distancia FIXADA: a trilha
+ *  menos uma tela de palco (100svh). E nela que os marcos sao medidos. */
+const ORIGINAL_PIN = ORIGINAL_VH - 100
+/** vh de rolagem por parada da esteira no desenho original: (720 * 0.56) / 5 */
+const STEP_VH = (ORIGINAL_PIN * (1 - 0.44)) / 5
+/** Roda 2x mais rapida que o desenho original (pedido do dono, 28/09): o
+ *  trecho da roda (0 → 0.44) cabe na metade da rolagem; a esteira nao muda. */
+const WHEEL_SPEED = 2
+const PIN_VH = (ORIGINAL_PIN * 0.44) / WHEEL_SPEED + STEP_VH * (STRIP_STOPS.length - 1)
+/** Altura total do trecho fixado, em viewports. */
+const TRACK_VH = PIN_VH + 100
+const at = (original: number) => (original * ORIGINAL_PIN) / WHEEL_SPEED / PIN_VH
+
+const WHEEL_END = at(0.35)
+const BENCH_START = at(0.29)
+const BENCH_END = at(0.44)
+const HERO_RELEASE = at(0.33)
+const COPY_IN_START = at(0.38)
+const COPY_IN_END = at(0.46)
+const CAROUSEL_START = at(0.44)
 
 /** Graus que a roda gira ate assentar… */
 const SPIN = 148
@@ -133,7 +156,8 @@ function layoutRow(active: number, out: RowFrame[]) {
 
   for (let j = 0; j < ROW_SLOTS; j++) {
     out[j] = {
-      center: GRID.margin + lefts[j] - anchor + widths[j] / 2,
+      // relativo a margem: o encolhimento de altura escala a fita, nunca a margem
+      center: lefts[j] - anchor + widths[j] / 2,
       width: widths[j],
     }
   }
@@ -172,12 +196,17 @@ export function Stage() {
       // usado pelos ecos, que nao tem origem na roda
       const benchP = easeInOutCubic(range(p, BENCH_START, BENCH_END))
 
-      // Indice ativo: 0 no primeiro card, 5 no ultimo. `settle` da uma
-      // acomodada em cada parada sem chegar a travar entre elas.
-      const steps = CARDS.length - 1
-      const rawActive = range(p, CAROUSEL_START, 1) * steps
-      const step = Math.min(steps - 1, Math.floor(rawActive))
-      const active = steps === 0 ? 0 : step + settle(rawActive - step)
+      // Parada ativa: 0 no primeiro destaque, STRIP_STOPS.length - 1 no
+      // ultimo. `settle` da uma acomodada em cada parada sem travar entre
+      // elas. `active` e a mesma coisa em indice de CARD: a fita anda de um
+      // destaque ao outro, passando pelos cards do meio.
+      const steps = STRIP_STOPS.length - 1
+      const rawStop = range(p, CAROUSEL_START, 1) * steps
+      const step = Math.min(steps - 1, Math.floor(rawStop))
+      const stop = steps === 0 ? 0 : step + settle(rawStop - step)
+      const active = steps === 0
+        ? STRIP_STOPS[0]
+        : lerp(STRIP_STOPS[step], STRIP_STOPS[step + 1], stop - step)
 
       layoutRow(active, row)
 
@@ -190,7 +219,7 @@ export function Stage() {
 
         const slot = STRIP[j]
         const target = row[j]
-        const targetX = target.center * fb - frameW / 2
+        const targetX = GRID.margin + target.center * fb - frameW / 2
         const targetScale = (target.width / CARD_W) * fb
 
         let x = targetX
@@ -265,11 +294,11 @@ export function Stage() {
       // espera abaixo da mascara; quem ja passou sai por cima. A troca
       // acontece no meio do caminho entre duas paradas, entao nunca ha dois
       // textos visiveis ao mesmo tempo.
-      for (let i = 0; i < CARDS.length; i++) {
+      for (let i = 0; i < STRIP_STOPS.length; i++) {
         const block = copyRefs.current[i]
         if (!block) continue
 
-        const d = active - i
+        const d = stop - i
         // para onde este bloco deve ir: quem ainda vem espera embaixo,
         // quem ja passou sai por cima
         const dir = -Math.sign(d)
@@ -339,7 +368,8 @@ export function Stage() {
           >
             <img
               className="card__img"
-              src={slot.card.photo.src}
+              // o card chega a ~555px no desktop (344.524 x 1.61) e a ~60vw no celular
+              {...imgProps(slot.card.photo.src, '(max-width: 1023px) 60vw, 36vw', CARD_W / CARD_H)}
               alt={j < CARDS.length ? slot.card.photo.alt : ''}
               aria-hidden={j >= CARDS.length}
               style={{ objectPosition: slot.card.photo.fit }}
@@ -386,12 +416,12 @@ export function Stage() {
             initial="hidden"
             animate="show"
           >
-            <a className="btn btn--ghost" href="/empresa.html">{CORPORATE.discover}</a>
+            <a className="btn btn--cta" href={`#${SECTION.lista}`} data-cta>{SITE.cta}</a>
           </motion.div>
         </div>
 
-        <div className="benefits" id="a-casa">
-          {CARDS.map((card, i) => (
+        <div className="benefits">
+          {STRIP_STOPS.map((index) => CARDS[index]).map((card, i) => (
             <div
               key={card.photo.id}
               className="benefit"
