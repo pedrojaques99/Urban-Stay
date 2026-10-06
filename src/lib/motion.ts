@@ -32,7 +32,7 @@ export const DUR = {
   /** foto que abre da moldura para o retangulo */
   reveal: 1.1,
   /** o anel de fotos nascendo na abertura mobile */
-  intro: 1.6,
+  intro: 1.1,
   /** algo que segue o ponteiro e assenta (marca do rodape) */
   follow: 0.6,
   /** troca de tema: a persiana abrindo o dia ou a noite sobre a pagina */

@@ -9,8 +9,10 @@ import { join, parse } from 'node:path'
 
 const SRC = 'public/img'
 const OUT = join(SRC, 'opt')
-/** 480 cobre o celular em 1x, 960 o celular em 2x e o card do desktop, 1600 a foto larga */
-const WIDTHS = [480, 960, 1600]
+/** 480 cobre o celular em 1x, 960 o celular em 2x, 1440 o celular em 3x e o card do desktop, 1920 a foto larga */
+const WIDTHS = [480, 960, 1440, 1920]
+/** original abaixo disto borra num celular 3x: o script avisa (fotos baixas, 05/10) */
+const LOW = 1200
 /** abaixo disto a foto nao vira versao: e icone ou avatar */
 const MIN_WIDTH = 300
 const QUALITY = 72
@@ -21,6 +23,7 @@ await mkdir(OUT, { recursive: true })
 const manifest = {}
 let before = 0
 let after = 0
+const low = []
 
 for (const file of (await readdir(SRC)).sort()) {
   if (!/\.(png|jpe?g)$/i.test(file) || SKIP.has(file)) continue
@@ -29,6 +32,7 @@ for (const file of (await readdir(SRC)).sort()) {
   if (!width || width < MIN_WIDTH) continue
 
   const name = parse(file).name
+  if (Math.max(width, height) < LOW) low.push(`${file} (${width}x${height})`)
   // nunca amplia: a maior versao e a largura original
   const widths = [...new Set(WIDTHS.map((w) => Math.min(w, width)))]
   before += (await stat(input)).size
@@ -44,3 +48,4 @@ for (const file of (await readdir(SRC)).sort()) {
 
 await writeFile('src/img-manifest.json', JSON.stringify(manifest, null, 2) + '\n')
 console.log(`\n${Object.keys(manifest).length} fotos · originais ${(before / 1e6).toFixed(1)}MB · versoes ${(after / 1e6).toFixed(1)}MB (todas as larguras somadas)`)
+if (low.length) console.warn(`\nATENCAO: original menor que ${LOW}px no lado maior (borra no celular):\n  ${low.join('\n  ')}`)

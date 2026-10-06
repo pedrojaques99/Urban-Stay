@@ -356,7 +356,7 @@
   translate: -50% -50%;   /* centra; o `transform` do draw vem depois */
   overflow: hidden;
   opacity: 0;
-  will-change: transform, opacity, clip-path;
+  will-change: transform, opacity;
   backface-visibility: hidden;
 }
 

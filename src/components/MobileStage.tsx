@@ -105,11 +105,17 @@ export function MobileStage({ ready }: { ready: boolean }) {
           scale = lerp(ringS, ringS * 0.6, close)
           opacity *= 1 - close
         }
-        el.style.width = `${baseW}px`
-        el.style.height = `${baseW * PORTRAIT}px`
+        // tamanho e recorte so quando mudam: escrever a cada quadro forcava
+        // layout e repintura dos 6 cards na primeira rolagem (05/10)
+        const w = `${baseW}px`
+        if (el.style.width !== w) {
+          el.style.width = w
+          el.style.height = `${baseW * PORTRAIT}px`
+        }
         el.style.opacity = String(opacity)
         el.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rot}deg) scale(${scale})`
-        el.style.clipPath = polygon(shape)
+        const clip = shape > 0 ? polygon(shape) : 'none'
+        if (el.style.clipPath !== clip) el.style.clipPath = clip
         // raio de 4 do Figma, compensado pela escala; some quando vira moldura
         el.style.borderRadius = `${(4 * (1 - shape)) / Math.max(scale, 0.01)}px`
         el.style.zIndex = trio ? '3' : '1'
@@ -139,7 +145,7 @@ export function MobileStage({ ready }: { ready: boolean }) {
       s.draw()
       return
     }
-    const tween = gsap.to(s, { intro: 1, duration: DUR.intro, ease: 'expo.out', delay: 0.15, onUpdate: () => s.draw() })
+    const tween = gsap.to(s, { intro: 1, duration: DUR.intro, ease: 'expo.out', onUpdate: () => s.draw() })
     return () => { tween.kill() }
   }, [ready])
 
@@ -156,7 +162,9 @@ export function MobileStage({ ready }: { ready: boolean }) {
               <img
                 {...imgProps(card.photo.src, '40vw', 1 / PORTRAIT)}
                 alt=""
-                loading={TRIO[j] ? 'eager' : 'lazy'}
+                // todas no primeiro quadro: lazy decodificava 3 fotos justo na primeira rolagem
+                loading="eager"
+                fetchPriority={TRIO[j] ? 'high' : 'auto'}
                 decoding="async"
                 style={{ objectPosition: card.photo.fit }}
               />

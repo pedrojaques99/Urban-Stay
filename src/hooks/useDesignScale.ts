@@ -77,7 +77,17 @@ export function useDesignScale(): DesignScale {
   )
 
   useEffect(() => {
-    const apply = () => setScale(applyDesignScale())
+    // No celular a primeira rolagem recolhe a barra de endereco: `resize` so
+    // de altura. Re-renderizar o App e regravar o `:root` ali travava a
+    // primeira rolagem (05/10). Abaixo de 1024 nada depende da altura (`--kb`
+    // e do desktop; o palco usa svh), entao so a largura conta.
+    let lastW = -1
+    const apply = () => {
+      const w = document.documentElement.clientWidth
+      if (w === lastW && w < 1024) return
+      lastW = w
+      setScale(applyDesignScale())
+    }
 
     apply()
     window.addEventListener('resize', apply)
