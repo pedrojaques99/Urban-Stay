@@ -291,6 +291,9 @@ export const SITE = {
   depoimentos: {
     title: 'Quem já dormiu aqui',
     stars: '5 de 5 estrelas',
+    railLabel: 'Depoimentos de hóspedes',
+    prev: 'Depoimento anterior',
+    next: 'Próximo depoimento',
     items: Array.from({ length: 4 }, () => ({
       quote: 'Gostei bastante, foi tudo bem tranquilo e o resultado ficou ótimo. Recomendo!',
       name: 'Gabriel Oliveira',

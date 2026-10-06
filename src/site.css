@@ -577,23 +577,87 @@
   text-align: center;
 }
 
-.depoimentos__list {
-  list-style: none;
-  margin: clamp(2.5rem, 5.4vw, 4.9rem) 0 0;
-  padding: 0 var(--gutter);
+/* Rail (colhido de @visant/rail): trilho horizontal com snap nativo, em
+   todas as larguras. Sangra ate a borda da tela, mas o primeiro card fica
+   na margem do site-frame (padding + scroll-padding iguais). A mascara so
+   existe do lado onde a lista continua (data-start / data-end). */
+.rail {
+  --rail-inset: max(var(--gutter), calc((100% - 1440px) / 2 + var(--gutter)));
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: min(80%, 18rem);
-  gap: 1rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: var(--gutter);
-  scrollbar-width: none;
+  gap: 1.5rem;
 }
 
-.depoimentos__list > li {
+.rail__track {
+  --fade-ini: 3rem;
+  --fade-fim: 3rem;
+  list-style: none;
+  margin: 0;
+  padding: 0 var(--rail-inset);
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: min(80%, 20rem);
+  gap: 1rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--rail-inset);
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--fade-ini), #000 calc(100% - var(--fade-fim)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 var(--fade-ini), #000 calc(100% - var(--fade-fim)), transparent 100%);
+}
+
+.rail__track::-webkit-scrollbar { display: none; }
+.rail__track[data-start] { --fade-ini: 0px; }
+.rail__track[data-end] { --fade-fim: 0px; }
+
+.rail__item {
   scroll-snap-align: start;
   display: flex;
+  border-radius: 5px;
+}
+
+.rail__item:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* setas so onde ha ponteiro: no toque o dedo ja arrasta */
+.rail__arrows {
+  display: none;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-inline: var(--rail-inset);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rail__arrows { display: flex; }
+}
+
+.rail__arrow {
+  display: inline-grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent);
+  border-radius: 50%;
+  background: none;
+  color: var(--ink);
+  font-size: 1.125rem;
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease-out), color 0.2s var(--ease-out), border-color 0.2s var(--ease-out), opacity 0.2s var(--ease-out);
+}
+
+.rail__arrow:hover:not(:disabled) {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.rail__arrow:active:not(:disabled) { scale: 0.94; }
+.rail__arrow:disabled { opacity: 0.3; cursor: default; }
+
+.depoimentos__rail {
+  margin-top: clamp(2.5rem, 5.4vw, 4.9rem);
 }
 
 .depoimento {
@@ -661,13 +725,9 @@
 }
 
 @media (min-width: 1024px) {
-  .depoimentos__list {
-    grid-auto-flow: row;
-    grid-template-columns: repeat(4, 1fr);
+  .depoimentos__rail .rail__track {
+    grid-auto-columns: clamp(18rem, 27vw, 24rem);
     gap: 1.75rem;
-    max-width: calc(1206px + 2 * var(--gutter));
-    margin-inline: auto;
-    overflow: visible;
   }
 }
 
@@ -760,12 +820,21 @@
   overflow: hidden;
   /* a Moldura Urbana: hexagono vertical, ponta em cima e embaixo */
   clip-path: polygon(50% 0%, 100% 13%, 100% 87%, 50% 100%, 0% 87%, 0% 13%);
+  /* paralaxe do mouse (usePointerParallax): `translate` e propriedade propria,
+     soma com o `transform` da entrada do framer sem brigar com ele. A
+     transicao longa e o que deixa o movimento suave. */
+  translate: calc(var(--px, 0) * var(--d, 0) * 1px) calc(var(--py, 0) * var(--d, 0) * 1px);
+  transition: translate 0.9s var(--ease-out);
 }
 
 .lista__moldura img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* a foto anda ao contrario da moldura, dentro dela: profundidade */
+  scale: 1.08;
+  translate: calc(var(--px, 0) * var(--d, 0) * -0.6px) calc(var(--py, 0) * var(--d, 0) * -0.6px);
+  transition: translate 1.1s var(--ease-out);
 }
 
 .lista__copy {

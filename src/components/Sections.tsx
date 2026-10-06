@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import type { FormEvent } from 'react'
+import type { CSSProperties, FormEvent } from 'react'
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import { ArrowUpRightIcon } from '@phosphor-icons/react/dist/csr/ArrowUpRight'
 import { StarIcon } from '@phosphor-icons/react/dist/csr/Star'
@@ -7,6 +7,8 @@ import { CARDS, INSTITUTIONAL_LINKS, LEGAL_LINKS, MANIFESTO, SECTION, SITE, toHo
 import { DUR, EASE_MASK, riseIn } from '../lib/motion'
 import { MaskTitle, Rise } from './Reveal'
 import { FooterMark } from './FooterMark'
+import { Rail } from './Rail'
+import { usePointerParallax } from '../hooks/usePointerParallax'
 import { imgProps } from '../lib/img'
 
 /**
@@ -114,15 +116,15 @@ export function Place() {
    No celular os cards viram uma fita com scroll-snap nativo.
    ------------------------------------------------------------------ */
 export function Depoimentos() {
-  const { title, stars, items } = SITE.depoimentos
+  const { title, stars, items, railLabel, prev, next } = SITE.depoimentos
   return (
     <section className="depoimentos">
       <div className="site-frame">
         <MaskTitle text={title} className="caps depoimentos__title" />
       </div>
-      <ul className="depoimentos__list">
+      <Rail className="depoimentos__rail" label={railLabel} prevLabel={prev} nextLabel={next}>
         {items.map((item, i) => (
-          <li key={i}>
+          <li key={i} className="rail__item">
             <Rise className="depoimento" delay={i * 0.08}>
               <figure>
                 <span className="depoimento__stars" role="img" aria-label={stars}>
@@ -140,7 +142,7 @@ export function Depoimentos() {
             </Rise>
           </li>
         ))}
-      </ul>
+      </Rail>
     </section>
   )
 }
@@ -155,10 +157,11 @@ export function Depoimentos() {
 const ENDPOINT = import.meta.env.VITE_WAITLIST_ENDPOINT as string | undefined
 type Status = 'idle' | 'sending' | 'done' | 'prototype' | 'error'
 
+/** `d` = profundidade na paralaxe do mouse (px no extremo): a do meio, mais perto, anda mais */
 const TRIO = [
-  { id: 'bed', h: '82%' },
-  { id: 'window', h: '100%' },
-  { id: 'robe', h: '70%' },
+  { id: 'bed', h: '82%', d: 10 },
+  { id: 'window', h: '100%', d: 18 },
+  { id: 'robe', h: '70%', d: 7 },
 ]
 
 export function Waitlist() {
@@ -166,6 +169,8 @@ export function Waitlist() {
   const [errors, setErrors] = useState<{ nome?: string; whatsapp?: string }>({})
   const reduced = useReducedMotion()
   const copy = SITE.lista
+  const trioRef = useRef<HTMLDivElement>(null)
+  usePointerParallax(trioRef)
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -197,14 +202,14 @@ export function Waitlist() {
   return (
     <section className="lista" id={SECTION.lista} data-nav-band>
       <div className="site-frame lista__grid">
-        <div className="lista__trio" aria-hidden="true">
+        <div className="lista__trio" aria-hidden="true" ref={trioRef}>
           {TRIO.map((item, i) => {
             const photo = byId(item.id)
             return (
               <motion.div
                 key={item.id}
                 className="lista__moldura"
-                style={{ height: item.h }}
+                style={{ height: item.h, '--d': item.d } as CSSProperties}
                 initial={reduced ? false : { opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.4 }}
