@@ -44,4 +44,6 @@ Branch `upgrade/mobile-first`. Ordem = impacto no celular (90% dos acessos).
 ## 3. Em aberto
 
 - **Loader**: 3,1–3,6 s na CPU 4x. A persiana precisa de 1,6 s (`minDuration`); encurtar corta a animação de marca. Decisão do dono.
-- Passada visual em 768, 1024, 1440 e 1920 + deploy de preview.
+- **Produção**: `upgrade/mobile-first` é a branch de produção na Vercel e o deploy é por CLI (não pela integração git). Preview desta entrega: https://urban-stay-bn8isjr34-visants-projects.vercel.app (protegido por login da Vercel). Promover para produção é decisão do dono.
+
+Passada em 768, 1024, 1440 e 1920 (headless): sem erro de console, sem imagem quebrada, sem rolagem horizontal.
